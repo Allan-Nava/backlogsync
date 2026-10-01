@@ -63,11 +63,27 @@ first version on npm, and it waits on one real repository running on backlogsync
   npmjs.com (`Allan-Nava`, `backlogsync`, `release.yml`, no environment), then pushes the
   tag; `release.yml` skips the publish and cuts the release. CONTRIBUTING has the steps.
   <!-- bs: prio=high size=S labels=release -->
-- [ ] **BS-10 — The 0.1.0 gate: one repository migrated, its sync observed**: pick one
+- [x] **BS-10 — The 0.1.0 gate: one repository migrated, its sync observed**: pick one
   of BS-11 to BS-17 as the pilot and move its item here; migrate it with the action
   pinned by commit; push a backlog change and watch the sync on GitHub do what its old
   script would have — the plan printed, the issue opened or closed, nothing else
-  touched. Record the run in the CHANGELOG. <!-- bs: prio=high size=M labels=migration -->
+  touched. Record the run in the CHANGELOG. Done 2026-10-01: skilltrigger (BS-15), its
+  PR #15 merged; the push ran `backlog-issues.yml` through the action at `974f2bd` and
+  printed `1 to create · 0 to retitle · 0 to move · 0 to close · 0 to reopen · 11 ok · 11
+  skipped`, then created ST-23 as issue #16 under its milestone with `project,prio-low`
+  — the plan the local dry run had printed against the same issues. The reusable
+  `release-drift.yml` reported "0.0.1 is marked not released" and passed.
+  <!-- bs: prio=high size=M labels=migration ver=main -->
+- [x] **BS-15 — Migrate skilltrigger**: prefix `ST`, `package.json`, tags
+  `skilltrigger--v<version>`; the one copy whose `prio-med` colour is `e4b429`, kept
+  through its `labels`. Done 2026-10-01 as the BS-10 pilot (skilltrigger ST-22): ROADMAP
+  diff the generated-by line and the regenerate command only.
+  <!-- bs: prio=med size=S labels=migration ver=main -->
+- [x] **BS-19 — Running a pinned commit locally**: `npx github:Allan-Nava/backlogsync#<sha>`
+  fails inside npm ("GitFetcher requires an Arborist constructor"), so a repository that
+  pins a commit has no `npx` route for its contributors. Found in the BS-10 pilot. Done
+  2026-10-01: the README documents the tarball URL, which works.
+  <!-- bs: prio=med size=S labels=docs ver=main -->
 
 ## v0.2.0 — Every copy replaced <!-- ms: phase=next -->
 
@@ -89,9 +105,6 @@ Done after 0.1.0, by version tag rather than commit.
   `disclosegate--v<version>`. Its drift copy reads no not-released marker while its
   0.0.1 section opens with one, so it fails once the grace window passes; the reusable
   workflow fixes that. <!-- bs: prio=high size=S labels=migration -->
-- [ ] **BS-15 — Migrate skilltrigger**: prefix `ST`, `package.json`, tags
-  `skilltrigger--v<version>`; the one copy whose `prio-med` colour is `e4b429`, kept
-  through its `labels`. <!-- bs: prio=med size=S labels=migration -->
 - [ ] **BS-16 — Migrate gpuledger**: a Go module — `.backlogsync.json`, prefix `GL`, a
   `VERSION` file, tags `v<version>`. Its copy carried the "Source of trugl" artefact.
   <!-- bs: prio=med size=S labels=migration -->
