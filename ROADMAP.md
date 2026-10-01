@@ -4,14 +4,14 @@
 
 > This page is **generated** from [BACKLOG.md](BACKLOG.md), the single source of truth for planned work. Regenerate it with `node bin/backlogsync.mjs roadmap` after editing the backlog — CI fails when the two disagree.
 
-**18 items · 8 shipped · 10 open · 3 milestones.**
+**19 items · 11 shipped · 8 open · 3 milestones.**
 
 ## At a glance
 
 | Milestone | Phase | Progress | Open | Shipped |
 |---|---|---|---|---|
-| **v0.1.0 — One repository in step** | now | `########..` 80% | 2 | 8 |
-| **v0.2.0 — Every copy replaced** | next | `..........` 0% | 7 | 0 |
+| **v0.1.0 — One repository in step** | now | `#########.` 92% | 1 | 11 |
+| **v0.2.0 — Every copy replaced** | next | `..........` 0% | 6 | 0 |
 | **v0.3.0 — Later** | later | `..........` 0% | 1 | 0 |
 
 ## v0.1.0 — One repository in step
@@ -25,7 +25,9 @@
 - [x] **BS-7** — The compatibility proof · high · S · migration, tests · `main`
 - [x] **BS-8** — The repository · med · M · project, release · `main`
 - [ ] **BS-9** — First publish by hand, then trusted publishing · high · S · release
-- [ ] **BS-10** — The 0.1.0 gate: one repository migrated, its sync observed · high · M · migration
+- [x] **BS-10** — The 0.1.0 gate: one repository migrated, its sync observed · high · M · migration · `main`
+- [x] **BS-15** — Migrate skilltrigger · med · S · migration · `main`
+- [x] **BS-19** — Running a pinned commit locally · med · S · docs · `main`
 
 ## v0.2.0 — Every copy replaced
 
@@ -33,7 +35,6 @@
 - [ ] **BS-12** — Migrate trimhook · med · S · migration
 - [ ] **BS-13** — Migrate transcriptmeter · med · S · migration
 - [ ] **BS-14** — Migrate disclosegate · high · S · migration
-- [ ] **BS-15** — Migrate skilltrigger · med · S · migration
 - [ ] **BS-16** — Migrate gpuledger · med · S · migration
 - [ ] **BS-17** — Migrate hlsdoctor · med · S · migration
 

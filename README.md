@@ -49,6 +49,14 @@ The `concurrency` group matters: two runs racing would both see no issue for an 
 
 **From npm**, once 0.1.0 is published: `npx backlogsync check`, or `npm install --save-dev backlogsync`.
 
+**From a commit**, before 0.1.0 is on npm, for a repository that pins the action by commit and wants the same version locally — the GitHub tarball, because `npx github:Allan-Nava/backlogsync#<sha>` fails inside npm ("GitFetcher requires an Arborist constructor"):
+
+```bash
+npx --yes https://codeload.github.com/Allan-Nava/backlogsync/tar.gz/<sha> check
+```
+
+skilltrigger's `npm run backlog` and `npm run roadmap` do exactly this.
+
 **From a checkout**: `node <checkout>/bin/backlogsync.mjs check`, run in the repository that holds the backlog.
 
 ## The backlog
