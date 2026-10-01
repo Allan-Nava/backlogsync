@@ -70,18 +70,36 @@ Releases run from GitHub Actions; pushing the tag is the manual step, and
 unless the CHANGELOG heading for that version says `not released`, as 0.0.1's does.
 
 **The first publish is by hand.** npm cannot configure a trusted publisher for a package
-that does not exist, so the first version (0.1.0, after the gate BS-10) is published by
-the maintainer from a clean checkout of the tagged commit (BS-9):
+that does not exist, so the first version, 0.1.0, is published by the maintainer (BS-9).
+The release PR bumps the version and merges first; then, in this order:
+
+1. On a clean checkout of `main` at the merged release commit, `npm login`, then
+   `npm publish --access public`.
+2. Configure the trusted publisher — with `npm trust` (npm 11.15 or later), or on
+   npmjs.com → package → Settings → Trusted Publisher → GitHub Actions: owner
+   `Allan-Nava` exactly, repository `backlogsync` (the name, not the URL), workflow
+   `release.yml`, environment empty.
+3. Push the tag `backlogsync--v0.1.0`. `release.yml` sees the version already on the
+   registry, skips the publish, and still cuts the GitHub release and closes the
+   milestone.
 
 ```bash
+git checkout main && git pull --ff-only
+git status --short                     # must print nothing: a clean checkout
+node -p "require('./package.json').version"   # 0.1.0
 npm test && npm pack --dry-run
+npm login
 npm publish --access public
+npm trust github backlogsync --repo Allan-Nava/backlogsync --file release.yml --allow-publish
+git tag backlogsync--v0.1.0 && git push origin backlogsync--v0.1.0
 ```
 
-Then on npmjs.com → package → Settings → Trusted Publisher → GitHub Actions: user
-`Allan-Nava`, repository `backlogsync` (the name, not the URL), workflow `release.yml`,
-environment empty. Push the tag afterwards: `release.yml` sees the version already on
-the registry, skips the publish, and still cuts the release and closes the milestone.
+The three steps belong together, in one sitting: `release-drift.yml` fails once the
+merged version has gone two hours without its tag, and the daily run keeps failing
+until the tag is pushed. Then tick BS-9 with `ver=0.1.0`, and set the v0.1.0 heading's
+phase to `shipped`, in a pull request. The milestone closes only with no open issue in it, so if BS-9's issue was still open when
+the tag ran, re-run the release once the sync has closed it —
+`gh workflow run Release -f tag=backlogsync--v0.1.0` skips everything already done.
 Never give `actions/setup-node` a `registry-url`; never rename `release.yml`.
 
 **Every later release:**

@@ -4,7 +4,7 @@
 
 **backlogsync keeps `BACKLOG.md` the single source of truth for planned work**: it checks the file, generates `ROADMAP.md` from it, and syncs GitHub issues and milestones one way — from the file to GitHub, never back. A Node CLI with zero runtime dependencies, and a composite GitHub Action that runs the same code.
 
-**Status:** 0.0.1, not released. It replaces the `scripts/backlog.mjs` that seven repositories each carried, and on 2026-10-01 it reproduced every one of their committed roadmaps byte for byte and planned the same sync, decision for decision, on their real issues (see [Compatibility](#compatibility)). The gate on 0.1.0 is one of those repositories migrated and its sync observed on GitHub. Until then use the action by commit: `uses: Allan-Nava/backlogsync@<sha>`.
+**Status:** 0.1.0, the first version on npm. It replaces the `scripts/backlog.mjs` that seven repositories each carried, and on 2026-10-01 it reproduced every one of their committed roadmaps byte for byte and planned the same sync, decision for decision, on their real issues (see [Compatibility](#compatibility)). The gate on 0.1.0 — one of those repositories migrated and its sync observed on GitHub — was met the same day by skilltrigger.
 
 ## What it does
 
@@ -18,7 +18,9 @@ The sync **never deletes**. There is no delete call in the code. An issue whose 
 
 Node 18 or later. No runtime dependencies, no build step, no install script.
 
-**As a GitHub Action**, before any npm release — `.github/workflows/backlog-issues.yml`:
+**From npm**: `npx backlogsync check`, or `npm install --save-dev backlogsync` and `npx backlogsync check` from then on.
+
+**As a GitHub Action**, pinned by release tag or by commit — `.github/workflows/backlog-issues.yml`:
 
 ```yaml
 name: Backlog issues
@@ -38,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: Allan-Nava/backlogsync@<sha>
+      - uses: Allan-Nava/backlogsync@backlogsync--v0.1.0   # or @<sha>
         with:
           command: sync        # or check, roadmap
           # dry-run: "true"
@@ -47,15 +49,13 @@ jobs:
 
 The `concurrency` group matters: two runs racing would both see no issue for an item and open it twice. The action's inputs are `command`, `dry-run`, `milestones`, `config`, `working-directory` and `token` (default: the job's `GITHUB_TOKEN`). It runs `node "$GITHUB_ACTION_PATH/bin/backlogsync.mjs"` with the runner's Node.
 
-**From npm**, once 0.1.0 is published: `npx backlogsync check`, or `npm install --save-dev backlogsync`.
-
-**From a commit**, before 0.1.0 is on npm, for a repository that pins the action by commit and wants the same version locally — the GitHub tarball, because `npx github:Allan-Nava/backlogsync#<sha>` fails inside npm ("GitFetcher requires an Arborist constructor"):
+**From a commit**, the pre-release route: for a repository that pins the action to a commit not yet released on npm and wants the same version locally — the GitHub tarball, because `npx github:Allan-Nava/backlogsync#<sha>` fails inside npm ("GitFetcher requires an Arborist constructor"):
 
 ```bash
 npx --yes https://codeload.github.com/Allan-Nava/backlogsync/tar.gz/<sha> check
 ```
 
-skilltrigger's `npm run backlog` and `npm run roadmap` do exactly this.
+skilltrigger's `npm run backlog` and `npm run roadmap`, from the 0.1.0 pilot, do exactly this.
 
 **From a checkout**: `node <checkout>/bin/backlogsync.mjs check`, run in the repository that holds the backlog.
 
@@ -114,7 +114,7 @@ Exit codes: `0` ok, `1` a problem in the backlog, a stale roadmap or a failed AP
 ```yaml
 jobs:
   drift:
-    uses: Allan-Nava/backlogsync/.github/workflows/release-drift.yml@<sha>
+    uses: Allan-Nava/backlogsync/.github/workflows/release-drift.yml@backlogsync--v0.1.0   # or @<sha>
     with:
       version-file: VERSION   # default package.json
       tag-prefix: v           # default <package name>--v, or v for a plain file

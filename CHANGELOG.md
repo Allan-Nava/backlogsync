@@ -5,6 +5,11 @@ versions follow [SemVer](https://semver.org/). Items reference their `BS-n` back
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-10-01
+
+The first version on npm: 0.0.1's tool, unchanged in behaviour, published once one
+repository had been migrated and its sync observed on GitHub.
+
 ### Added
 - The 0.1.0 gate is met: skilltrigger migrated with the action pinned by commit, and its
   first sync on GitHub created the one issue the dry run had planned and touched nothing
@@ -13,6 +18,10 @@ versions follow [SemVer](https://semver.org/). Items reference their `BS-n` back
 ### Changed
 - The README documents running a pinned commit locally through the GitHub tarball, since
   `npx github:…` fails inside npm (BS-19).
+- The README installs from npm and pins the action by its release tag,
+  `@backlogsync--v0.1.0`, or by commit; the tarball route stays for a commit that is not
+  released. CONTRIBUTING gives the first release's order: publish by hand, configure the
+  trusted publisher, push the tag (BS-9).
 
 ## [0.0.1] — 2026-10-01 — not released
 

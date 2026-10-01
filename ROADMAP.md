@@ -16,18 +16,18 @@
 
 ## v0.1.0 — One repository in step
 
-- [x] **BS-1** — The format, read · high · M · cli · `main`
-- [x] **BS-2** — roadmap and check · high · S · cli · `main`
-- [x] **BS-3** — sync over the REST API · high · M · sync · `main`
-- [x] **BS-4** — Configuration · high · S · cli · `main`
-- [x] **BS-5** — The action and the reusable release-drift workflow · high · M · action · `main`
-- [x] **BS-6** — Tests · high · M · tests · `main`
-- [x] **BS-7** — The compatibility proof · high · S · migration, tests · `main`
-- [x] **BS-8** — The repository · med · M · project, release · `main`
+- [x] **BS-1** — The format, read · high · M · cli · `0.1.0`
+- [x] **BS-2** — roadmap and check · high · S · cli · `0.1.0`
+- [x] **BS-3** — sync over the REST API · high · M · sync · `0.1.0`
+- [x] **BS-4** — Configuration · high · S · cli · `0.1.0`
+- [x] **BS-5** — The action and the reusable release-drift workflow · high · M · action · `0.1.0`
+- [x] **BS-6** — Tests · high · M · tests · `0.1.0`
+- [x] **BS-7** — The compatibility proof · high · S · migration, tests · `0.1.0`
+- [x] **BS-8** — The repository · med · M · project, release · `0.1.0`
 - [ ] **BS-9** — First publish by hand, then trusted publishing · high · S · release
-- [x] **BS-10** — The 0.1.0 gate: one repository migrated, its sync observed · high · M · migration · `main`
-- [x] **BS-15** — Migrate skilltrigger · med · S · migration · `main`
-- [x] **BS-19** — Running a pinned commit locally · med · S · docs · `main`
+- [x] **BS-10** — The 0.1.0 gate: one repository migrated, its sync observed · high · M · migration · `0.1.0`
+- [x] **BS-15** — Migrate skilltrigger · med · S · migration · `0.1.0`
+- [x] **BS-19** — Running a pinned commit locally · med · S · docs · `0.1.0`
 
 ## v0.2.0 — Every copy replaced
 

@@ -32,36 +32,37 @@ first version on npm, and it waits on one real repository running on backlogsync
 - [x] **BS-1 — The format, read**: `parse` and `lint` over the superset of the seven
   copies: milestone headings with `<!-- ms: phase=… -->`, items with the configured
   prefix and meta key, the same fault list, plus four faults the copies let pass
-  silently. <!-- bs: prio=high size=M labels=cli ver=main -->
+  silently. <!-- bs: prio=high size=M labels=cli ver=0.1.0 -->
 - [x] **BS-2 — roadmap and check**: `ROADMAP.md` in the layout every copy produced,
   byte for byte given the same name and regenerate command; `check` fails on a lint
-  error and on a stale or missing roadmap. <!-- bs: prio=high size=S labels=cli ver=main -->
+  error and on a stale or missing roadmap. <!-- bs: prio=high size=S labels=cli ver=0.1.0 -->
 - [x] **BS-3 — sync over the REST API**: the planner of the copies — create, close,
   reopen, retitle, move — with `--dry-run` and `--milestones`, on `node:http(s)` with no
   `gh` CLI; no delete call exists; the token never follows a link to another origin.
-  <!-- bs: prio=high size=M labels=sync ver=main -->
+  <!-- bs: prio=high size=M labels=sync ver=0.1.0 -->
 - [x] **BS-4 — Configuration**: `package.json#backlogsync` or `.backlogsync.json`, one
   of them, validated with unknown keys refused; the label set in both shapes.
-  <!-- bs: prio=high size=S labels=cli ver=main -->
+  <!-- bs: prio=high size=S labels=cli ver=0.1.0 -->
 - [x] **BS-5 — The action and the reusable release-drift workflow**: a composite
   `action.yml` running the CLI from the action's checkout, inputs passed as environment
   variables; `release-drift.yml` callable with `version-file`, `tag-prefix`,
-  `grace-hours` and `changelog`. <!-- bs: prio=high size=M labels=action ver=main -->
+  `grace-hours` and `changelog`. <!-- bs: prio=high size=M labels=action ver=0.1.0 -->
 - [x] **BS-6 — Tests**: `node:test` over the format, the config, the planner, the CLI
   and the sync, the last against a fake GitHub API on a local port; synthetic fixtures
-  only. <!-- bs: prio=high size=M labels=tests ver=main -->
+  only. <!-- bs: prio=high size=M labels=tests ver=0.1.0 -->
 - [x] **BS-7 — The compatibility proof**: `scripts/compat.mjs` over checkouts of the
   seven repositories, roadmap byte-identical and plan identical in all seven on
   2026-10-01; it writes only to a temporary directory.
-  <!-- bs: prio=high size=S labels=migration,tests ver=main -->
+  <!-- bs: prio=high size=S labels=migration,tests ver=0.1.0 -->
 - [x] **BS-8 — The repository**: CI on Node 18 to 24, the own-history leak check,
   `npm pack`, CodeQL, Pages from the README, the release and drift workflows, and this
-  backlog synced by the tool itself. <!-- bs: prio=med size=M labels=project,release ver=main -->
+  backlog synced by the tool itself. <!-- bs: prio=med size=M labels=project,release ver=0.1.0 -->
 - [ ] **BS-9 — First publish by hand, then trusted publishing**: npm cannot configure a
   trusted publisher for a package that does not exist, so the maintainer publishes 0.1.0
-  from a clean checkout of the tagged commit, configures the trusted publisher on
-  npmjs.com (`Allan-Nava`, `backlogsync`, `release.yml`, no environment), then pushes the
+  from a clean checkout of `main` at the merged release commit, configures the trusted
+  publisher (`Allan-Nava`, `backlogsync`, `release.yml`, no environment), then pushes the
   tag; `release.yml` skips the publish and cuts the release. CONTRIBUTING has the steps.
+  Open until the publish: the maintainer ticks it with `ver=0.1.0` afterwards.
   <!-- bs: prio=high size=S labels=release -->
 - [x] **BS-10 — The 0.1.0 gate: one repository migrated, its sync observed**: pick one
   of BS-11 to BS-17 as the pilot and move its item here; migrate it with the action
@@ -73,17 +74,17 @@ first version on npm, and it waits on one real repository running on backlogsync
   skipped`, then created ST-23 as issue #16 under its milestone with `project,prio-low`
   — the plan the local dry run had printed against the same issues. The reusable
   `release-drift.yml` reported "0.0.1 is marked not released" and passed.
-  <!-- bs: prio=high size=M labels=migration ver=main -->
+  <!-- bs: prio=high size=M labels=migration ver=0.1.0 -->
 - [x] **BS-15 — Migrate skilltrigger**: prefix `ST`, `package.json`, tags
   `skilltrigger--v<version>`; the one copy whose `prio-med` colour is `e4b429`, kept
   through its `labels`. Done 2026-10-01 as the BS-10 pilot (skilltrigger ST-22): ROADMAP
   diff the generated-by line and the regenerate command only.
-  <!-- bs: prio=med size=S labels=migration ver=main -->
+  <!-- bs: prio=med size=S labels=migration ver=0.1.0 -->
 - [x] **BS-19 — Running a pinned commit locally**: `npx github:Allan-Nava/backlogsync#<sha>`
   fails inside npm ("GitFetcher requires an Arborist constructor"), so a repository that
   pins a commit has no `npx` route for its contributors. Found in the BS-10 pilot. Done
   2026-10-01: the README documents the tarball URL, which works.
-  <!-- bs: prio=med size=S labels=docs ver=main -->
+  <!-- bs: prio=med size=S labels=docs ver=0.1.0 -->
 
 ## v0.2.0 — Every copy replaced <!-- ms: phase=next -->
 
