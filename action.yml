@@ -1,0 +1,65 @@
+name: backlogsync
+description: BACKLOG.md as the single source of truth — check it, generate ROADMAP.md, sync GitHub issues and milestones one way.
+author: Allan Nava
+branding:
+  icon: list
+  color: orange
+
+# A composite action, so a repository can adopt backlogsync by ref before any npm
+# release exists: it runs the CLI from this checkout of the action, with the
+# runner's own Node (18 or later — every GitHub-hosted image has one; add
+# actions/setup-node before this step on a runner that does not).
+#
+# Inputs reach the shell as environment variables, never interpolated into the
+# script, so a milestone list cannot become a command.
+
+inputs:
+  command:
+    description: "check, roadmap or sync"
+    required: false
+    default: sync
+  dry-run:
+    description: "sync only: print the plan, change nothing"
+    required: false
+    default: "false"
+  milestones:
+    description: "sync only: limit to these milestones by version, comma-separated (e.g. v0.1.0). Empty means all."
+    required: false
+    default: ""
+  config:
+    description: "A config file instead of .backlogsync.json / package.json#backlogsync"
+    required: false
+    default: ""
+  working-directory:
+    description: "The repository directory, relative to the workspace"
+    required: false
+    default: "."
+  token:
+    description: "The token the sync uses; it needs issues: write. The default is the job's GITHUB_TOKEN."
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        BS_COMMAND: ${{ inputs.command }}
+        BS_DRY_RUN: ${{ inputs.dry-run }}
+        BS_MILESTONES: ${{ inputs.milestones }}
+        BS_CONFIG: ${{ inputs.config }}
+        GITHUB_TOKEN: ${{ inputs.token }}
+      run: |
+        set -euo pipefail
+        case "$BS_COMMAND" in
+          check|roadmap|sync) ;;
+          *) echo "::error::command must be check, roadmap or sync, got: $BS_COMMAND"; exit 2 ;;
+        esac
+        args=("$BS_COMMAND")
+        if [ -n "$BS_CONFIG" ]; then args+=(--config "$BS_CONFIG"); fi
+        if [ "$BS_COMMAND" = sync ]; then
+          if [ "$BS_DRY_RUN" = true ]; then args+=(--dry-run); fi
+          if [ -n "$BS_MILESTONES" ]; then args+=(--milestones "$BS_MILESTONES"); fi
+        fi
+        node "$GITHUB_ACTION_PATH/bin/backlogsync.mjs" "${args[@]}"

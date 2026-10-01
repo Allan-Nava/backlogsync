@@ -1,0 +1,85 @@
+{
+  "name": "backlogsync",
+  "version": "0.0.1",
+  "description": "BACKLOG.md as the single source of truth: a generated ROADMAP.md, a check for CI, and a one-way sync to GitHub issues and milestones. Zero dependencies.",
+  "type": "module",
+  "bin": {
+    "backlogsync": "bin/backlogsync.mjs"
+  },
+  "files": [
+    "bin",
+    "action.yml",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node bin/backlogsync.mjs check && node scripts/repo-check.mjs && node --test",
+    "build:site": "node site/build.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Allan-Nava/backlogsync"
+  },
+  "homepage": "https://allan-nava.github.io/backlogsync/",
+  "bugs": "https://github.com/Allan-Nava/backlogsync/issues",
+  "keywords": [
+    "backlog",
+    "roadmap",
+    "github-issues",
+    "milestones",
+    "github-action",
+    "zero-dependency"
+  ],
+  "author": "Allan Nava (https://github.com/Allan-Nava)",
+  "license": "MIT",
+  "backlogsync": {
+    "prefix": "BS",
+    "meta": "bs",
+    "regenerate": "node bin/backlogsync.mjs roadmap",
+    "labels": {
+      "cli": {
+        "color": "b7552f",
+        "description": "The commands: roadmap, check, sync"
+      },
+      "sync": {
+        "color": "0e8a16",
+        "description": "The issue sync and the REST client"
+      },
+      "action": {
+        "color": "1d76db",
+        "description": "The composite action and the reusable workflows"
+      },
+      "migration": {
+        "color": "5319e7",
+        "description": "Replacing a repository's own backlog script"
+      },
+      "release": {
+        "color": "6f42c1",
+        "description": "Publishing and versioning"
+      },
+      "docs": {
+        "color": "0075ca",
+        "description": "README, CONTRIBUTING, site"
+      },
+      "project": {
+        "color": "6a737d",
+        "description": "Backlog, roadmap, repo hygiene"
+      },
+      "tests": {
+        "color": "d4c5f9",
+        "description": "Test coverage and the fake GitHub API"
+      },
+      "enhancement": {
+        "color": "a2eeef",
+        "description": "New capability"
+      }
+    }
+  },
+  "devDependencies": {
+    "marked": "^17.0.0"
+  }
+}

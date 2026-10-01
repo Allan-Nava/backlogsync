@@ -1,0 +1,56 @@
+name: Backlog issues
+
+# Keep this repository's GitHub issues in step with its BACKLOG.md — with backlogsync
+# itself, through the composite action at the root of this checkout (`uses: ./`), the
+# same action an adopting repository reaches as `uses: Allan-Nava/backlogsync@<ref>`.
+#
+# BACKLOG.md is the single source of truth, as it is for ROADMAP.md: an item's stable
+# BS-n id is what commits and the CHANGELOG reference, and the issue is a view of it.
+# The sync runs one way only. Editing an issue title or closing it on GitHub does not
+# change the plan; ticking the item in BACKLOG.md does.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - BACKLOG.md
+      - bin/**
+      - action.yml
+      - .github/workflows/backlog-issues.yml
+  workflow_dispatch:
+    inputs:
+      milestones:
+        description: "Limit to these milestones by version, comma-separated (e.g. v0.1.0). Empty means all."
+        required: false
+        default: ""
+      dry_run:
+        description: "Print the plan without changing anything"
+        type: boolean
+        required: false
+        default: false
+
+# Opening and closing issues needs issues: write. Nothing here writes to the repository.
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  # Two runs racing would both see "no issue for BS-n" and open it twice.
+  group: backlog-issues
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      # The plan is printed in full before anything is applied, so the log says what the
+      # run was about to do even if a later call fails.
+      - uses: ./
+        with:
+          command: sync
+          milestones: ${{ github.event.inputs.milestones }}
+          dry-run: ${{ github.event.inputs.dry_run == 'true' }}

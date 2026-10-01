@@ -1,0 +1,113 @@
+name: Release drift
+
+# A merged release PR publishes nothing: the tag is the trigger and pushing it is
+# manual. A sibling project's release sat on main untagged for a week and nothing said
+# so. This says so.
+#
+# It fails when the manifest's version has no matching tag, once the commit that set
+# the version is older than the grace a release PR needs between merging and tagging.
+# It runs on push so a bump is checked, and daily so a quiet repository still hears
+# about a tag nobody pushed — a failing scheduled run emails the owner.
+#
+# The same file is a reusable workflow, so the copy every repository carried can go:
+#
+#   jobs:
+#     drift:
+#       uses: Allan-Nava/backlogsync/.github/workflows/release-drift.yml@<ref>
+#       with:
+#         version-file: VERSION       # or package.json (the default)
+#         tag-prefix: v               # default: <package name>--v, or v for a VERSION file
+#
+# A version whose CHANGELOG heading says "not released", or whose section opens with
+# "Not released", is on main on purpose and passes with a notice.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      version-file:
+        description: "package.json (its version field) or a plain file holding the version, such as VERSION"
+        type: string
+        required: false
+        default: package.json
+      tag-prefix:
+        description: "What precedes the version in the tag. Empty means <package name>--v for package.json, v otherwise."
+        type: string
+        required: false
+        default: ""
+      grace-hours:
+        description: "How long a version may sit on main untagged before this fails"
+        type: number
+        required: false
+        default: 2
+      changelog:
+        description: "The CHANGELOG that may mark a version as not released"
+        type: string
+        required: false
+        default: CHANGELOG.md
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      # Inputs are empty on push, schedule and dispatch; the defaults below are this
+      # repository's own.
+      - name: Compare the version against the tags
+        env:
+          VERSION_FILE: ${{ inputs.version-file || 'package.json' }}
+          TAG_PREFIX: ${{ inputs.tag-prefix }}
+          GRACE_HOURS: ${{ inputs.grace-hours || 2 }}
+          CHANGELOG: ${{ inputs.changelog || 'CHANGELOG.md' }}
+        run: |
+          set -euo pipefail
+          if [ ! -f "$VERSION_FILE" ]; then
+            echo "::error::$VERSION_FILE does not exist"
+            exit 1
+          fi
+          case "$VERSION_FILE" in
+            *.json)
+              VERSION="$(node -p "require('./' + process.argv[1]).version" "$VERSION_FILE")"
+              PREFIX="${TAG_PREFIX:-$(node -p "require('./' + process.argv[1]).name + '--v'" "$VERSION_FILE")}"
+              # The commit that last touched the version line.
+              SET_AT="$(git log -1 --format=%ct -G'"version"' -- "$VERSION_FILE")" ;;
+            *)
+              VERSION="$(tr -d ' \n\r' < "$VERSION_FILE")"
+              PREFIX="${TAG_PREFIX:-v}"
+              SET_AT="$(git log -1 --format=%ct -- "$VERSION_FILE")" ;;
+          esac
+          TAG="$PREFIX$VERSION"
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "$TAG exists — nothing to report"
+            exit 0
+          fi
+          # Either marker the replaced copies used: "not released" on the heading line,
+          # or a section whose first line opens with "Not released".
+          if [ -f "$CHANGELOG" ]; then
+            HEAD_LINE="$(grep -E "^## \[$VERSION\]" "$CHANGELOG" | head -1 || true)"
+            FIRST="$(awk -v v="$VERSION" 'index($0, "## [" v "]") == 1 {f=1; next} f && NF {print; exit}' "$CHANGELOG")"
+            if printf '%s' "$HEAD_LINE" | grep -qi 'not released' || case "$FIRST" in "Not released"*) true ;; *) false ;; esac; then
+              echo "::notice::$VERSION is marked not released in $CHANGELOG — no tag expected"
+              exit 0
+            fi
+          fi
+          AGE=$(( $(date +%s) - ${SET_AT:-0} ))
+          GRACE=$(( GRACE_HOURS * 3600 ))
+          if [ "$AGE" -lt "$GRACE" ]; then
+            echo "::notice::$VERSION is on main without $TAG for $((AGE / 60)) min — inside the grace window"
+            exit 0
+          fi
+          echo "::error::$VERSION has been on main for $((AGE / 3600)) h with no $TAG — nothing was released. From a checkout of main: git tag $TAG && git push origin $TAG"
+          exit 1

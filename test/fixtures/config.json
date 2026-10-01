@@ -1,0 +1,8 @@
+{
+  "prefix": "DM",
+  "name": "demo",
+  "labels": {
+    "core": { "color": "b7552f", "description": "The core" },
+    "docs": ["0075ca", "Documentation"]
+  }
+}

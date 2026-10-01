@@ -1,0 +1,11 @@
+[
+  { "number": 11, "title": "DM-1 — Shipped with an issue still open", "state": "open", "milestone": { "number": 1, "title": "v0.1.0 — First light" } },
+  { "number": 13, "title": "DM-4 — Open whose issue was closed", "state": "closed", "milestone": { "number": 1, "title": "v0.1.0 — First light" } },
+  { "number": 14, "title": "DM-5 — An older title", "state": "open", "milestone": { "number": 2, "title": "v0.2.0 — Second light" } },
+  { "number": 15, "title": "DM-6 — Moved between milestones", "state": "open", "milestone": { "number": 1, "title": "v0.1.0 — First light" } },
+  { "number": 16, "title": "DM-7 — Already right", "state": "open", "milestone": { "number": 2, "title": "v0.2.0 — Second light" } },
+  { "number": 17, "title": "DM-7 — A later duplicate, ignored", "state": "open", "milestone": null },
+  { "number": 18, "title": "DM-3 — A pull request is not an issue", "state": "open", "milestone": null, "pull_request": {} },
+  { "number": 19, "title": "Something filed by hand", "state": "open", "milestone": null },
+  { "number": 20, "title": "ZZ-3 — Another prefix", "state": "open", "milestone": null }
+]

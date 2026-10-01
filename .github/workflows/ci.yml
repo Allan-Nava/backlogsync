@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # `node >=18`, no runtime dependencies. The tests run on the floor and on every later
+  # line without `npm install`, so both claims are tested rather than stated. The sync
+  # is tested against a fake GitHub API on a local port; no test reaches GitHub.
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [18, 20, 22, 24]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm test
+
+  # The leak check turned on this repository's own history: every commit reachable from
+  # any ref — identity, message and patch — through the shapes `npm test` applies to
+  # the tree. A forward fix leaves the original commit readable, so the tree alone is
+  # not enough. CI has no private term list; the maintainer's local run adds one.
+  own-history:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node scripts/repo-check.mjs --history
+
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      # What `npm publish` would actually ship: bin/, action.yml, README, CHANGELOG, LICENSE.
+      - run: npm pack --dry-run
+
+  # The composite action, used the way an adopting repository uses it, on this
+  # repository's own backlog: the check, then a sync that only plans.
+  action:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./
+        with:
+          command: check
+      - uses: ./
+        with:
+          command: sync
+          dry-run: "true"
