@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Allan-Nava/backlogsync"
+    "url": "git+https://github.com/Allan-Nava/backlogsync.git"
   },
   "homepage": "https://allan-nava.github.io/backlogsync/",
   "bugs": "https://github.com/Allan-Nava/backlogsync/issues",

@@ -5,6 +5,10 @@ versions follow [SemVer](https://semver.org/). Items reference their `BS-n` back
 
 ## [Unreleased]
 
+### Changed
+- `repository.url` takes the form npm normalises it to (`git+https://….git`), so `npm
+  publish` no longer rewrites it and warns.
+
 ## [0.1.0] — 2026-10-01
 
 The first version on npm: 0.0.1's tool, unchanged in behaviour, published once one
