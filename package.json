@@ -1,6 +1,6 @@
 {
   "name": "backlogsync",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "BACKLOG.md as the single source of truth: a generated ROADMAP.md, a check for CI, and a one-way sync to GitHub issues and milestones. Zero dependencies.",
   "type": "module",
   "bin": {
