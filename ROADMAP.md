@@ -4,14 +4,14 @@
 
 > This page is **generated** from [BACKLOG.md](BACKLOG.md), the single source of truth for planned work. Regenerate it with `node bin/backlogsync.mjs roadmap` after editing the backlog — CI fails when the two disagree.
 
-**19 items · 11 shipped · 8 open · 3 milestones.**
+**19 items · 13 shipped · 6 open · 3 milestones.**
 
 ## At a glance
 
 | Milestone | Phase | Progress | Open | Shipped |
 |---|---|---|---|---|
 | **v0.1.0 — One repository in step** | now | `#########.` 92% | 1 | 11 |
-| **v0.2.0 — Every copy replaced** | next | `..........` 0% | 6 | 0 |
+| **v0.2.0 — Every copy replaced** | next | `###.......` 33% | 4 | 2 |
 | **v0.3.0 — Later** | later | `..........` 0% | 1 | 0 |
 
 ## v0.1.0 — One repository in step
@@ -33,8 +33,8 @@
 
 - [ ] **BS-11** — Migrate hookgate · med · S · migration
 - [ ] **BS-12** — Migrate trimhook · med · S · migration
-- [ ] **BS-13** — Migrate transcriptmeter · med · S · migration
-- [ ] **BS-14** — Migrate disclosegate · high · S · migration
+- [x] **BS-13** — Migrate transcriptmeter · med · S · migration · `main`
+- [x] **BS-14** — Migrate disclosegate · high · S · migration · `main`
 - [ ] **BS-16** — Migrate gpuledger · med · S · migration
 - [ ] **BS-17** — Migrate hlsdoctor · med · S · migration
 

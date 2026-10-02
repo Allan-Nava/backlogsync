@@ -6,6 +6,8 @@ versions follow [SemVer](https://semver.org/). Items reference their `BS-n` back
 ## [Unreleased]
 
 ### Changed
+- disclosegate and transcriptmeter run on backlogsync 0.1.0; with skilltrigger and
+  whipbench that is four repositories off their own copy (BS-13, BS-14).
 - `repository.url` takes the form npm normalises it to (`git+https://….git`), so `npm
   publish` no longer rewrites it and warns.
 

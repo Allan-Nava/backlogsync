@@ -99,13 +99,17 @@ Done after 0.1.0, by version tag rather than commit.
   `hookgate--v<version>`. <!-- bs: prio=med size=S labels=migration -->
 - [ ] **BS-12 — Migrate trimhook**: prefix `TH`, `package.json`, tags
   `trimhook--v<version>`. <!-- bs: prio=med size=S labels=migration -->
-- [ ] **BS-13 — Migrate transcriptmeter**: prefix `TM`, `package.json`, tags
+- [x] **BS-13 — Migrate transcriptmeter**: prefix `TM`, `package.json`, tags
   `transcriptmeter--v<version>`. Its copy carried the "Source of trutm" artefact in
-  the issue footer. <!-- bs: prio=med size=S labels=migration -->
-- [ ] **BS-14 — Migrate disclosegate**: prefix `DG`, `package.json`, tags
+  the issue footer. Done 2026-10-02: transcriptmeter TM-24, its PR #29; the sync dry run and the first
+  run on `main` touched nothing.
+  <!-- bs: prio=med size=S labels=migration ver=main -->
+- [x] **BS-14 — Migrate disclosegate**: prefix `DG`, `package.json`, tags
   `disclosegate--v<version>`. Its drift copy reads no not-released marker while its
   0.0.1 section opens with one, so it fails once the grace window passes; the reusable
-  workflow fixes that. <!-- bs: prio=high size=S labels=migration -->
+  workflow fixes that. Done 2026-10-02: disclosegate DG-28, its PR #20; release drift now through the
+  reusable workflow, which reads the DG-27 marker.
+  <!-- bs: prio=high size=S labels=migration ver=main -->
 - [ ] **BS-16 — Migrate gpuledger**: a Go module — `.backlogsync.json`, prefix `GL`, a
   `VERSION` file, tags `v<version>`. Its copy carried the "Source of trugl" artefact.
   <!-- bs: prio=med size=S labels=migration -->
