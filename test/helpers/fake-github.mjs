@@ -6,7 +6,8 @@ import http from 'node:http'
 
 export async function fakeGitHub({ repo = 'octo/demo', token = 'test-token', pageSize = 100, issues = [], labels = [], milestones = [] } = {}) {
   const state = {
-    issues: issues.map((i) => ({ state: 'open', milestone: null, labels: [], body: '', ...i })),
+    // Labels on an issue come back as objects, the way the real API returns them.
+    issues: issues.map((i) => ({ state: 'open', milestone: null, body: '', ...i, labels: (i.labels ?? []).map((l) => (typeof l === 'string' ? { name: l } : l)) })),
     labels: labels.map((l) => (typeof l === 'string' ? { name: l, color: 'ededed', description: '' } : l)),
     milestones: milestones.map((m, i) => ({ number: i + 1, state: 'open', description: '', ...m })),
     comments: [],
@@ -77,6 +78,12 @@ export async function fakeGitHub({ repo = 'octo/demo', token = 'test-token', pag
           const ms = state.milestones.find((x) => x.number === body.milestone)
           if (!ms) return send(422, { message: 'Validation Failed: milestone' })
           issue.milestone = { number: ms.number, title: ms.title }
+        }
+        // `labels` replaces the issue's whole set, as on GitHub. A name that is not a
+        // label of the repository is refused here, so the sync must create it first.
+        if (body.labels !== undefined) {
+          for (const l of body.labels) if (!state.labels.some((x) => x.name === l)) return send(422, { message: `Validation Failed: label ${l}` })
+          issue.labels = body.labels.map((name) => ({ name }))
         }
         return send(200, issue)
       }

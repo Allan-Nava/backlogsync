@@ -3,7 +3,7 @@
 // was about to do even when a later call fails.
 import { DASH } from './backlog.mjs'
 import { allLabels } from './config.mjs'
-import { existingFromIssues, plan, summarise } from './plan.mjs'
+import { existingFromIssues, labelDiff, plan, summarise } from './plan.mjs'
 
 export function issueBody(it, cfg, { server = 'https://github.com', repo }) {
   const blob = `${server}/${repo}/blob/${cfg.branch}`
@@ -24,9 +24,9 @@ export const MILESTONE_DESCRIPTION = 'Backlog milestone. Source of truth: BACKLO
 // → { actions, summary, applied: [lines] }. `log` receives every line as it happens.
 export async function sync(model, cfg, gh, { dryRun = false, only = [], server, log = console.log } = {}) {
   const existing = existingFromIssues(await gh.issues(), cfg)
-  const actions = plan(model, existing, only)
+  const actions = plan(model, existing, only, cfg)
   for (const a of actions) log(a.join('\t'))
-  const summary = summarise(actions)
+  const summary = summarise(actions, cfg)
   log('')
   log(summary)
   const todo = actions.filter((a) => !['OK', 'SKIP'].includes(a[0]))
@@ -41,8 +41,9 @@ export async function sync(model, cfg, gh, { dryRun = false, only = [], server, 
   }
   const byId = new Map(model.items.map((i) => [i.id, i]))
 
-  // Labels only matter to a CREATE: an existing issue's labels are left as they are.
-  if (todo.some((a) => a[0] === 'CREATE')) {
+  // Labels only matter to a CREATE, or to a LABELS when `syncLabels` is on; otherwise an
+  // existing issue's labels are left as they are.
+  if (todo.some((a) => a[0] === 'CREATE' || a[0] === 'LABELS')) {
     const have = new Set((await gh.labels()).map((l) => l.name))
     for (const [name, { color, description }] of Object.entries(allLabels(cfg))) {
       if (have.has(name)) continue
@@ -73,7 +74,7 @@ export async function sync(model, cfg, gh, { dryRun = false, only = [], server, 
   }
 
   const repo = gh.repo
-  for (const [action, id, num] of todo) {
+  for (const [action, id, num, detail] of todo) {
     const it = byId.get(id)
     const title = `${id}${DASH}${it.title}`
     if (action === 'CREATE') {
@@ -86,6 +87,11 @@ export async function sync(model, cfg, gh, { dryRun = false, only = [], server, 
     } else if (action === 'MILESTONE') {
       await gh.updateIssue(num, { milestone: await milestoneNumber(it.ms.title) })
       note(`  moved ${id}  #${num}  -> ${it.ms.title}`)
+    } else if (action === 'LABELS') {
+      // One PATCH with the issue's whole list: a label leaves an issue without a DELETE,
+      // and a label outside the managed set stays in the list it was read with.
+      await gh.updateIssue(num, { labels: labelDiff(it, existing.get(id), cfg).next })
+      note(`  relabelled ${id}  #${num}  ${detail}`)
     } else if (action === 'CLOSE') {
       await gh.comment(num, CLOSE_COMMENT)
       await gh.updateIssue(num, { state: 'closed', state_reason: 'completed' })

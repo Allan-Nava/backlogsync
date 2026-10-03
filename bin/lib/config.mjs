@@ -21,9 +21,9 @@ export const PRIO_LABELS = {
 }
 
 export const DEFAULT_REGENERATE = 'npx backlogsync roadmap'
-const KEYS = new Set(['prefix', 'meta', 'name', 'backlog', 'roadmap', 'labels', 'branch', 'regenerate'])
+const KEYS = new Set(['prefix', 'meta', 'name', 'backlog', 'roadmap', 'labels', 'branch', 'regenerate', 'syncLabels'])
 
-// → { root, source, prefix, meta, name, backlog, roadmap, labels, branch, regenerate }
+// → { root, source, prefix, meta, name, backlog, roadmap, labels, branch, regenerate, syncLabels }
 // `backlog` and `roadmap` are absolute; `backlogRel` is the path the documents print.
 export function loadConfig({ cwd = process.cwd(), configPath } = {}) {
   let raw
@@ -91,6 +91,12 @@ export function normalise(raw, { root = process.cwd(), source = '(inline)', pkgN
       labels[lname] = { color: color.toLowerCase(), description }
     }
   }
+  // Off by default: an issue's labels are set once, at creation, unless the repository
+  // asks for them to be kept in step (BS-18). The set the sync may add and remove is the
+  // declared one, so a repository that declares none has nothing to keep in step.
+  if (raw.syncLabels !== undefined && typeof raw.syncLabels !== 'boolean') bad(`syncLabels must be true or false, got ${JSON.stringify(raw.syncLabels)}`)
+  const syncLabels = raw.syncLabels === true
+  if (syncLabels && !labels) bad('syncLabels needs "labels": the sync adds and removes only the labels declared there, and none are')
   return {
     root,
     source,
@@ -104,6 +110,7 @@ export function normalise(raw, { root = process.cwd(), source = '(inline)', pkgN
     labels,
     branch,
     regenerate,
+    syncLabels,
   }
 }
 

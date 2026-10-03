@@ -119,8 +119,12 @@ Done after 0.1.0, by version tag rather than commit.
 
 ## v0.3.0 — Later <!-- ms: phase=later -->
 
-- [ ] **BS-18 — Keep labels in step on existing issues**: today an issue's labels are
+- [x] **BS-18 — Keep labels in step on existing issues**: today an issue's labels are
   set once, at creation, as every copy did; a label changed in the backlog afterwards
   does not reach the issue. Add a `LABELS` action that sets them, behind a config key so
-  a repository that labels issues by hand is not overwritten.
-  <!-- bs: prio=low size=S labels=sync,enhancement -->
+  a repository that labels issues by hand is not overwritten. Done 2026-10-03:
+  `"syncLabels": true`, off by default and refused without `labels`; it adds and removes
+  only the declared labels and the `prio-` ones, with one `PATCH` of the issue's list, so
+  a hand-added label stays and there is still no delete call. The plan prints
+  `LABELS <id> <#> +added -removed`; the summary line counts `to relabel` only when the
+  key is on. <!-- bs: prio=low size=S labels=sync,enhancement ver=main -->

@@ -84,3 +84,11 @@ test('the priority labels are always there, and a configured one wins', () => {
   assert.equal(own['prio-med'].color, 'e4b429')
   assert.ok(own.x && own['prio-high'])
 })
+
+test('syncLabels is off unless set, a boolean, and needs a declared label set (BS-18)', () => {
+  assert.equal(normalise({ prefix: 'ST' }).syncLabels, false, 'off by default: an issue labelled by hand is never overwritten')
+  assert.equal(normalise({ prefix: 'ST', labels: { a: ['111111', ''] }, syncLabels: true }).syncLabels, true)
+  assert.equal(normalise({ prefix: 'ST', syncLabels: false }).syncLabels, false)
+  assert.throws(() => normalise({ prefix: 'ST', labels: { a: ['111111', ''] }, syncLabels: 'yes' }), /syncLabels must be true or false/)
+  assert.throws(() => normalise({ prefix: 'ST', syncLabels: true }), /syncLabels needs "labels"/)
+})
