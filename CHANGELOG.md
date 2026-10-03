@@ -5,6 +5,10 @@ versions follow [SemVer](https://semver.org/). Items reference their `BS-n` back
 
 ## [Unreleased]
 
+### Changed
+- hookgate and trimhook run on backlogsync 0.1.1; with disclosegate, skilltrigger,
+  transcriptmeter and whipbench that is six repositories off their own copy (BS-11, BS-12).
+
 ## [0.1.1] — 2026-10-03
 
 0.1.1 adds the opt-in label sync, and with the key off the plan is byte-identical to
