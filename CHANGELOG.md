@@ -5,6 +5,11 @@ versions follow [SemVer](https://semver.org/). Items reference their `BS-n` back
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-10-03
+
+0.1.1 adds the opt-in label sync, and with the key off the plan is byte-identical to
+0.1.0.
+
 ### Added
 - `"syncLabels": true` keeps an existing issue's labels in step with its backlog item: a
   `LABELS` action adds the labels the item names and removes the ones it no longer does,

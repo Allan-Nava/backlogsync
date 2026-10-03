@@ -33,11 +33,11 @@
 
 - [ ] **BS-11** — Migrate hookgate · med · S · migration
 - [ ] **BS-12** — Migrate trimhook · med · S · migration
-- [x] **BS-13** — Migrate transcriptmeter · med · S · migration · `main`
-- [x] **BS-14** — Migrate disclosegate · high · S · migration · `main`
+- [x] **BS-13** — Migrate transcriptmeter · med · S · migration · `0.1.1`
+- [x] **BS-14** — Migrate disclosegate · high · S · migration · `0.1.1`
 - [ ] **BS-16** — Migrate gpuledger · med · S · migration
 - [ ] **BS-17** — Migrate hlsdoctor · med · S · migration
 
 ## v0.3.0 — Later
 
-- [x] **BS-18** — Keep labels in step on existing issues · low · S · sync, enhancement · `main`
+- [x] **BS-18** — Keep labels in step on existing issues · low · S · sync, enhancement · `0.1.1`
