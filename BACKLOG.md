@@ -96,10 +96,12 @@ its CI's backlog job at `check`; replace `release-drift.yml` with a call to the 
 workflow; regenerate `ROADMAP.md` and confirm the diff is the generated-by line only.
 Done after 0.1.0, by version tag rather than commit.
 
-- [ ] **BS-11 — Migrate hookgate**: prefix `HG`, `package.json`, tags
-  `hookgate--v<version>`. <!-- bs: prio=med size=S labels=migration -->
-- [ ] **BS-12 — Migrate trimhook**: prefix `TH`, `package.json`, tags
-  `trimhook--v<version>`. <!-- bs: prio=med size=S labels=migration -->
+- [x] **BS-11 — Migrate hookgate**: prefix `HG`, `package.json`, tags
+  `hookgate--v<version>`. Done 2026-10-03: hookgate HG-33, its PR #67; the dry run
+  touched nothing. <!-- bs: prio=med size=S labels=migration ver=main -->
+- [x] **BS-12 — Migrate trimhook**: prefix `TH`, `package.json`, tags
+  `trimhook--v<version>`. Done 2026-10-03: trimhook TH-38, its PR #61; the dry run
+  touched nothing. <!-- bs: prio=med size=S labels=migration ver=main -->
 - [x] **BS-13 — Migrate transcriptmeter**: prefix `TM`, `package.json`, tags
   `transcriptmeter--v<version>`. Its copy carried the "Source of trutm" artefact in
   the issue footer. Done 2026-10-02: transcriptmeter TM-24, its PR #29; the sync dry run and the first
