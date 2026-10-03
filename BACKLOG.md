@@ -103,13 +103,13 @@ Done after 0.1.0, by version tag rather than commit.
   `transcriptmeter--v<version>`. Its copy carried the "Source of trutm" artefact in
   the issue footer. Done 2026-10-02: transcriptmeter TM-24, its PR #29; the sync dry run and the first
   run on `main` touched nothing.
-  <!-- bs: prio=med size=S labels=migration ver=main -->
+  <!-- bs: prio=med size=S labels=migration ver=0.1.1 -->
 - [x] **BS-14 — Migrate disclosegate**: prefix `DG`, `package.json`, tags
   `disclosegate--v<version>`. Its drift copy reads no not-released marker while its
   0.0.1 section opens with one, so it fails once the grace window passes; the reusable
   workflow fixes that. Done 2026-10-02: disclosegate DG-28, its PR #20; release drift now through the
   reusable workflow, which reads the DG-27 marker.
-  <!-- bs: prio=high size=S labels=migration ver=main -->
+  <!-- bs: prio=high size=S labels=migration ver=0.1.1 -->
 - [ ] **BS-16 — Migrate gpuledger**: a Go module — `.backlogsync.json`, prefix `GL`, a
   `VERSION` file, tags `v<version>`. Its copy carried the "Source of trugl" artefact.
   <!-- bs: prio=med size=S labels=migration -->
@@ -127,4 +127,4 @@ Done after 0.1.0, by version tag rather than commit.
   only the declared labels and the `prio-` ones, with one `PATCH` of the issue's list, so
   a hand-added label stays and there is still no delete call. The plan prints
   `LABELS <id> <#> +added -removed`; the summary line counts `to relabel` only when the
-  key is on. <!-- bs: prio=low size=S labels=sync,enhancement ver=main -->
+  key is on. <!-- bs: prio=low size=S labels=sync,enhancement ver=0.1.1 -->

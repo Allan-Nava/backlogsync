@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: Allan-Nava/backlogsync@backlogsync--v0.1.0   # or @<sha>
+      - uses: Allan-Nava/backlogsync@backlogsync--v0.1.1   # or @<sha>
         with:
           command: sync        # or check, roadmap
           # dry-run: "true"
@@ -115,7 +115,7 @@ Exit codes: `0` ok, `1` a problem in the backlog, a stale roadmap or a failed AP
 ```yaml
 jobs:
   drift:
-    uses: Allan-Nava/backlogsync/.github/workflows/release-drift.yml@backlogsync--v0.1.0   # or @<sha>
+    uses: Allan-Nava/backlogsync/.github/workflows/release-drift.yml@backlogsync--v0.1.1   # or @<sha>
     with:
       version-file: VERSION   # default package.json
       tag-prefix: v           # default <package name>--v, or v for a plain file
