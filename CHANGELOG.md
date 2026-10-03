@@ -5,6 +5,15 @@ versions follow [SemVer](https://semver.org/). Items reference their `BS-n` back
 
 ## [Unreleased]
 
+### Added
+- `"syncLabels": true` keeps an existing issue's labels in step with its backlog item: a
+  `LABELS` action adds the labels the item names and removes the ones it no longer does,
+  within the declared `labels` and the three `prio-` labels, with one `PATCH` of the
+  issue's label list — still no delete call. A label outside that set, added by hand, is
+  left alone. Off by default, and it needs `labels`; with it off the plan and the summary
+  line read exactly as in 0.1.0. On, the plan prints `LABELS <id> <#> +added -removed`
+  and the summary line counts `N to relabel` (BS-18).
+
 ### Changed
 - disclosegate and transcriptmeter run on backlogsync 0.1.0; with skilltrigger and
   whipbench that is four repositories off their own copy (BS-13, BS-14).

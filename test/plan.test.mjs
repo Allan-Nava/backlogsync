@@ -67,3 +67,47 @@ test('no action deletes anything', () => {
 test('the summary line counts each kind', () => {
   assert.equal(summarise(EXPECTED), '1 to create · 1 to retitle · 1 to move · 1 to close · 1 to reopen · 3 ok · 1 skipped')
 })
+
+// BS-18: labels kept in step on existing issues, behind `syncLabels`.
+const cfgOn = { ...cfg, syncLabels: true } // normalise() validates the key: test/config.test.mjs
+const labelled = [
+  { number: 11, title: 'DM-1 — Shipped with an issue still open', state: 'open', milestone: { title: 'v0.1.0 — First light' }, labels: [{ name: 'core' }, { name: 'prio-high' }] },
+  { number: 13, title: 'DM-4 — Open whose issue was closed', state: 'closed', milestone: { title: 'v0.1.0 — First light' }, labels: [{ name: 'docs' }, { name: 'prio-high' }] },
+  { number: 16, title: 'DM-7 — Already right', state: 'open', milestone: { title: 'v0.2.0 — Second light' }, labels: [{ name: 'docs' }, { name: 'prio-high' }, { name: 'by-hand' }] },
+]
+
+test('labels: off by default, so an issue whose labels drifted is left alone', () => {
+  const ex = existingFromIssues(labelled, cfg)
+  assert.ok(!plan(model, ex).some((a) => a[0] === 'LABELS'))
+  assert.ok(!plan(model, ex, [], cfg).some((a) => a[0] === 'LABELS'))
+})
+
+test('labels: with syncLabels, adds the missing, removes the stale, leaves an unmanaged label', () => {
+  const actions = plan(model, existingFromIssues(labelled, cfgOn), [], cfgOn)
+  assert.deepEqual(actions.filter((a) => a[1] === 'DM-7'), [['LABELS', 'DM-7', '16', '+core +prio-med -docs -prio-high'], ['OK', 'DM-7', '16']], 'by-hand is not in the label set, so it is neither added nor removed')
+  assert.deepEqual(actions.filter((a) => a[1] === 'DM-4'), [['LABELS', 'DM-4', '13', '+core -docs'], ['REOPEN', 'DM-4', '13']], 'a closed issue is kept in step too')
+  assert.deepEqual(actions.filter((a) => a[1] === 'DM-1'), [['CLOSE', 'DM-1', '11']], 'already in step: no LABELS')
+})
+
+test('labels: exactly one prio- label, the one prio= names', () => {
+  const ex = existingFromIssues([{ number: 5, title: 'DM-7 — Already right', state: 'open', milestone: { title: 'v0.2.0 — Second light' }, labels: ['core', 'prio-low', 'prio-med', 'prio-high'] }], cfgOn)
+  assert.deepEqual(plan(model, ex, [], cfgOn).filter((a) => a[1] === 'DM-7'), [['LABELS', 'DM-7', '5', '-prio-low -prio-high'], ['OK', 'DM-7', '5']])
+})
+
+test('labels: an issue read without its labels is not relabelled', () => {
+  const ex = existingFromIssues([{ number: 5, title: 'DM-7 — Already right', state: 'open', milestone: { title: 'v0.2.0 — Second light' } }], cfgOn)
+  assert.deepEqual(plan(model, ex, [], cfgOn).filter((a) => a[1] === 'DM-7'), [['OK', 'DM-7', '5']])
+})
+
+test('the summary line counts relabels only when syncLabels is on, so it reads as before otherwise', () => {
+  const actions = plan(model, existingFromIssues(labelled, cfgOn), [], cfgOn)
+  assert.equal(summarise(actions, cfgOn), '3 to create · 0 to retitle · 0 to move · 2 to relabel · 1 to close · 1 to reopen · 1 ok · 1 skipped')
+  assert.equal(summarise(EXPECTED, cfgOn), '1 to create · 1 to retitle · 1 to move · 0 to relabel · 1 to close · 1 to reopen · 3 ok · 1 skipped')
+  assert.equal(summarise(EXPECTED, cfg), summarise(EXPECTED))
+})
+
+test('no action deletes anything, LABELS included: it sets the list, it removes no label from the repository', () => {
+  const kinds = new Set(plan(model, existingFromIssues(labelled, cfgOn), [], cfgOn).map((a) => a[0]))
+  assert.ok(kinds.has('LABELS'))
+  for (const k of kinds) assert.ok(['CREATE', 'RETITLE', 'MILESTONE', 'LABELS', 'CLOSE', 'REOPEN', 'OK', 'SKIP'].includes(k))
+})

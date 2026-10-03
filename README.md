@@ -10,7 +10,7 @@
 
 - **`backlogsync check`** — validates the backlog (ids well-formed and unique, metadata that parses and holds known values, every item under a milestone) and fails when `ROADMAP.md` is not what the backlog would generate. The CI gate.
 - **`backlogsync roadmap`** — writes `ROADMAP.md`: a summary line, a table of milestones with progress bars, then every item by milestone.
-- **`backlogsync sync`** — plans the issue sync, prints the whole plan, then applies it over the GitHub REST API: create the issue for an open item, close it when the item is ticked, reopen it when the item is unticked, retitle it when the title drifts, move it when the item moves to another milestone. `--dry-run` prints the plan and changes nothing.
+- **`backlogsync sync`** — plans the issue sync, prints the whole plan, then applies it over the GitHub REST API: create the issue for an open item, close it when the item is ticked, reopen it when the item is unticked, retitle it when the title drifts, move it when the item moves to another milestone, and — only with [`syncLabels`](#configuration) on — set its labels when the item's have changed. `--dry-run` prints the plan and changes nothing.
 
 The sync **never deletes**. There is no delete call in the code. An issue whose item has left the backlog is left alone; so is an issue filed by hand, a pull request, and an issue with another prefix.
 
@@ -75,7 +75,7 @@ skilltrigger's `npm run backlog` and `npm run roadmap`, from the 0.1.0 pilot, do
 - The **id never changes**. A new item takes the next free number.
 - Fenced blocks are skipped whole, so the file can document its own format, as above.
 
-The issue for an item is titled `<id> — <title>`; that prefix is the only link between the two, so the title is the one thing the sync rewrites. The body is the item's text with every HTML comment stripped, followed by a footer naming the backlog. It is written once, at creation.
+The issue for an item is titled `<id> — <title>`; that prefix is the only link between the two, so the title is the one thing the sync rewrites — with `syncLabels` on, the labels too. The body is the item's text with every HTML comment stripped, followed by a footer naming the backlog. It is written once, at creation.
 
 ## Configuration
 
@@ -102,6 +102,7 @@ In `package.json` under `"backlogsync"`, or in `.backlogsync.json` — which is 
 | `backlog`, `roadmap` | `BACKLOG.md`, `ROADMAP.md` | Paths, relative to the config's directory. |
 | `branch` | `main` | The branch the issue footer links to. |
 | `regenerate` | `npx backlogsync roadmap` | The command the roadmap and the stale-roadmap error tell a reader to run. The generated-by comment prints it without its leading `node` or `npx`. |
+| `syncLabels` | `false` | `true` keeps an existing issue's labels in step with its item: a `LABELS` action adds what the item names and removes what it no longer does, within `labels` and the three `prio-` labels; any other label on the issue is left alone. Needs `labels`. Off, an issue's labels are set once, at creation. |
 
 The sync takes `GITHUB_TOKEN` (or `GH_TOKEN`) and `GITHUB_REPOSITORY` from the environment, plus `GITHUB_API_URL` and `GITHUB_SERVER_URL` when set — Actions sets all four. A dry run on a public repository works without a token. Labels `prio-high`, `prio-med` and `prio-low` are added to every new issue from its `prio=`; a `labels` entry of the same name overrides one's colour.
 
@@ -136,9 +137,19 @@ The seven copies agreed on the format, the lint rules, the roadmap layout and th
 Changed on purpose, and the same in every repository from now on:
 
 - The sync calls the REST API itself rather than the `gh` CLI, and applies by default; `--dry-run` replaces the old `issues` / `issues --apply` pair. `lint` and `check` are one command, `check`; the old `stats` line is the roadmap's summary line.
-- Labels are ensured only when an issue is about to be created, not on every run.
+- Labels are ensured only when an issue is about to be created, or relabelled with `syncLabels` on — not on every run.
 - The close and reopen comments and the issue footer name backlogsync rather than a script path.
 - The lint is stricter in four ways the copies let pass silently: an item under another prefix, an item ticked `[X]`, two milestone headings with one title (the sync finds a milestone by title), and a `prio-` label listed by hand. None of the seven real backlogs trips them.
+
+Added since, opt-in, so a repository that does not ask sees no change:
+
+- **Labels on existing issues** (BS-18) — every copy set an issue's labels once, at creation, so a label changed in the backlog never reached the issue. `"syncLabels": true` adds a `LABELS` action, off by default because a repository that labels its issues by hand must not have them overwritten.
+  - **It sets, not only adds.** A label the item no longer names is removed from the issue, or a label moved from one item to another would sit on both. The removal is a `PATCH` of the issue's whole label list, not the per-label `DELETE` the API also offers, so the sync still has no delete call, and nothing is removed from the repository's label set.
+  - **Managed means declared.** The sync adds and removes only the labels in `labels` plus `prio-high`, `prio-med` and `prio-low`. A label outside that set — `needs-triage`, added by hand — is never added and never removed: it stays in the list the `PATCH` sends. That is why `syncLabels` needs `labels`: with none declared there is no set to keep in step, and the config is refused.
+  - **One `prio-` label.** An issue carries exactly `prio-<prio>`; a change of `prio=` swaps it, and any other `prio-` label is removed, wherever it came from.
+  - **Any state.** A closed issue is relabelled like an open one, as a title is retitled in any state. An issue read without its labels is not planned at all.
+  - **The plan line**, tab-separated like the others, is `LABELS <id> <#> +added -removed`, for example `LABELS ST-12 41 +docs +prio-low -prio-med`, in the dry run as in a real one; applied, `relabelled ST-12 #41 +docs +prio-low -prio-med`. Labels that do not exist yet are created first, as for a new issue.
+  - **The summary line** gains `N to relabel`, after `to move`, only when `syncLabels` is on — even at zero, so the line's shape follows the config, not the data. With the key off it reads exactly as in 0.1.0.
 
 ## Compatibility
 

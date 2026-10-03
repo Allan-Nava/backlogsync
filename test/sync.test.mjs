@@ -141,3 +141,53 @@ test('the repository must be owner/name', () => {
   assert.throws(() => client({ repo: 'nope' }), /GITHUB_REPOSITORY must be owner\/name/)
   assert.throws(() => client({}), /GITHUB_REPOSITORY must be owner\/name/)
 })
+
+// BS-18: labels kept in step on existing issues, behind `syncLabels`.
+const cfgOn = { ...cfg, syncLabels: true } // normalise() validates the key: test/config.test.mjs
+const seedLabelled = () => ({
+  issues: [
+    { number: 14, title: 'DM-5 — Renamed in the backlog', state: 'open', milestone: { number: 2, title: 'v0.2.0 — Second light' }, labels: ['docs', 'prio-low'] },
+    { number: 15, title: 'DM-6 — Moved between milestones', state: 'open', milestone: { number: 2, title: 'v0.2.0 — Second light' }, labels: ['core', 'prio-med'] },
+    { number: 16, title: 'DM-7 — Already right', state: 'open', milestone: { number: 2, title: 'v0.2.0 — Second light' }, labels: ['docs', 'prio-high', 'by-hand'] },
+  ],
+  milestones: [{ title: 'v0.1.0 — First light' }, { title: 'v0.2.0 — Second light' }],
+  labels: ['core', 'docs', 'by-hand'],
+})
+const labelNames = (issue) => issue.labels.map((l) => l.name)
+
+test('labels: off by default, an existing issue keeps whatever labels it has', () =>
+  withFake(seedLabelled(), async (fake, gh) => {
+    const lines = []
+    await sync(model, cfg, gh, { only: ['v0.2.0'], log: (l) => lines.push(l) })
+    assert.deepEqual(fake.writes(), [])
+    assert.deepEqual(labelNames(fake.state.issues.find((i) => i.number === 16)), ['docs', 'prio-high', 'by-hand'])
+    assert.ok(lines.includes('0 to create · 0 to retitle · 0 to move · 0 to close · 0 to reopen · 3 ok · 0 skipped'), 'the summary line reads as in 0.1.0')
+  }))
+
+test('labels: the dry run prints what would be added and removed, and sends nothing', () =>
+  withFake(seedLabelled(), async (fake, gh) => {
+    const lines = []
+    await sync(model, cfgOn, gh, { dryRun: true, only: ['v0.2.0'], log: (l) => lines.push(l) })
+    assert.deepEqual(fake.writes(), [])
+    assert.ok(lines.includes('LABELS\tDM-7\t16\t+core +prio-med -docs -prio-high'))
+    assert.ok(lines.includes('0 to create · 0 to retitle · 0 to move · 1 to relabel · 0 to close · 0 to reopen · 3 ok · 0 skipped'))
+  }))
+
+test('labels: syncLabels sets the list with one PATCH, keeps a label added by hand, then finds nothing to do', () =>
+  withFake(seedLabelled(), async (fake, gh) => {
+    const lines = []
+    await sync(model, cfgOn, gh, { only: ['v0.2.0'], log: (l) => lines.push(l) })
+    const patches = fake.writes().filter((r) => r.method === 'PATCH')
+    assert.deepEqual(patches.map((r) => [r.path, r.body]), [['/repos/octo/demo/issues/16', { labels: ['by-hand', 'core', 'prio-med'] }]])
+    assert.deepEqual(labelNames(fake.state.issues.find((i) => i.number === 16)), ['by-hand', 'core', 'prio-med'])
+    assert.ok(lines.includes('  relabelled DM-7  #16  +core +prio-med -docs -prio-high'))
+    // The priority labels did not exist: they are created before the PATCH that names them.
+    assert.ok(['prio-high', 'prio-med', 'prio-low'].every((n) => fake.state.labels.some((l) => l.name === n)))
+    assert.ok(!fake.state.requests.some((r) => r.method === 'DELETE'), 'no delete call, not even for a label on an issue')
+    assert.deepEqual(new Set(fake.writes().map((r) => `${r.method} ${r.path}`)), new Set(['POST /repos/octo/demo/labels', 'PATCH /repos/octo/demo/issues/16']))
+
+    const before = fake.writes().length
+    const again = await sync(model, cfgOn, gh, { only: ['v0.2.0'], log: quiet })
+    assert.equal(fake.writes().length, before, 'the second run sent no write')
+    assert.ok(!again.actions.some((a) => a[0] === 'LABELS'))
+  }))

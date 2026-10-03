@@ -26,7 +26,8 @@ zero runtime dependencies and no build step. `BACKLOG.md` is the single source o
 ## Rules
 
 - The sync is one way and never deletes. The plan is printed before anything is applied;
-  `--dry-run` sends no write.
+  `--dry-run` sends no write. `syncLabels` (off by default) removes a label from an issue
+  by a `PATCH` of its label list, and only a declared or `prio-` label.
 - `roadmap()` output is a compatibility contract: byte-identical to the replaced copies.
 - Fixtures are synthetic; never copy a real backlog or issue list into the repository.
 - No runtime dependency, no install script, no build.

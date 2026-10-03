@@ -52,7 +52,9 @@ Do not weaken these; they are the tool's reason to exist.
    prefix `<id> — ` is the only link between an item and its issue.
 2. **Never delete.** No delete call exists in `lib/github.mjs`; the planner has no
    action for it; an issue whose item left the backlog is not touched. The fake API
-   answers DELETE with 405 and the tests assert none is sent.
+   answers DELETE with 405 and the tests assert none is sent. With `syncLabels` on, a
+   label leaves an issue through a `PATCH` of its whole label list, never the per-label
+   DELETE endpoint, and only a declared or `prio-` label is ever removed (BS-18).
 3. **The plan is printed in full before anything is applied**, and `--dry-run` sends no
    write — the tests assert zero non-GET requests.
 4. **The roadmap layout is a compatibility contract.** `roadmap()` must keep producing
