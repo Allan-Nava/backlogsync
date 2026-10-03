@@ -4,13 +4,13 @@
 
 > This page is **generated** from [BACKLOG.md](BACKLOG.md), the single source of truth for planned work. Regenerate it with `node bin/backlogsync.mjs roadmap` after editing the backlog — CI fails when the two disagree.
 
-**19 items · 14 shipped · 5 open · 3 milestones.**
+**19 items · 15 shipped · 4 open · 3 milestones.**
 
 ## At a glance
 
 | Milestone | Phase | Progress | Open | Shipped |
 |---|---|---|---|---|
-| **v0.1.0 — One repository in step** | now | `#########.` 92% | 1 | 11 |
+| **v0.1.0 — One repository in step** | now | `##########` 100% | 0 | 12 |
 | **v0.2.0 — Every copy replaced** | next | `###.......` 33% | 4 | 2 |
 | **v0.3.0 — Later** | later | `##########` 100% | 0 | 1 |
 
@@ -24,7 +24,7 @@
 - [x] **BS-6** — Tests · high · M · tests · `0.1.0`
 - [x] **BS-7** — The compatibility proof · high · S · migration, tests · `0.1.0`
 - [x] **BS-8** — The repository · med · M · project, release · `0.1.0`
-- [ ] **BS-9** — First publish by hand, then trusted publishing · high · S · release
+- [x] **BS-9** — First publish by hand, then trusted publishing · high · S · release · `0.1.0`
 - [x] **BS-10** — The 0.1.0 gate: one repository migrated, its sync observed · high · M · migration · `0.1.0`
 - [x] **BS-15** — Migrate skilltrigger · med · S · migration · `0.1.0`
 - [x] **BS-19** — Running a pinned commit locally · med · S · docs · `0.1.0`
