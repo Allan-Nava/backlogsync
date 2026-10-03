@@ -57,13 +57,14 @@ first version on npm, and it waits on one real repository running on backlogsync
 - [x] **BS-8 — The repository**: CI on Node 18 to 24, the own-history leak check,
   `npm pack`, CodeQL, Pages from the README, the release and drift workflows, and this
   backlog synced by the tool itself. <!-- bs: prio=med size=M labels=project,release ver=0.1.0 -->
-- [ ] **BS-9 — First publish by hand, then trusted publishing**: npm cannot configure a
+- [x] **BS-9 — First publish by hand, then trusted publishing**: npm cannot configure a
   trusted publisher for a package that does not exist, so the maintainer publishes 0.1.0
   from a clean checkout of `main` at the merged release commit, configures the trusted
   publisher (`Allan-Nava`, `backlogsync`, `release.yml`, no environment), then pushes the
   tag; `release.yml` skips the publish and cuts the release. CONTRIBUTING has the steps.
-  Open until the publish: the maintainer ticks it with `ver=0.1.0` afterwards.
-  <!-- bs: prio=high size=S labels=release -->
+  Open until the publish: the maintainer ticks it with `ver=0.1.0` afterwards. Done 2026-10-03: 0.1.0 published by hand on 2026-10-01;
+  the trusted publisher is confirmed by 0.1.1, which `release.yml` published over OIDC.
+  <!-- bs: prio=high size=S labels=release ver=0.1.0 -->
 - [x] **BS-10 — The 0.1.0 gate: one repository migrated, its sync observed**: pick one
   of BS-11 to BS-17 as the pilot and move its item here; migrate it with the action
   pinned by commit; push a backlog change and watch the sync on GitHub do what its old
