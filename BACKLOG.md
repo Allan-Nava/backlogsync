@@ -98,10 +98,10 @@ Done after 0.1.0, by version tag rather than commit.
 
 - [x] **BS-11 — Migrate hookgate**: prefix `HG`, `package.json`, tags
   `hookgate--v<version>`. Done 2026-10-03: hookgate HG-33, its PR #67; the dry run
-  touched nothing. <!-- bs: prio=med size=S labels=migration ver=main -->
+  touched nothing. <!-- bs: prio=med size=S labels=migration ver=0.2.0 -->
 - [x] **BS-12 — Migrate trimhook**: prefix `TH`, `package.json`, tags
   `trimhook--v<version>`. Done 2026-10-03: trimhook TH-38, its PR #61; the dry run
-  touched nothing. <!-- bs: prio=med size=S labels=migration ver=main -->
+  touched nothing. <!-- bs: prio=med size=S labels=migration ver=0.2.0 -->
 - [x] **BS-13 — Migrate transcriptmeter**: prefix `TM`, `package.json`, tags
   `transcriptmeter--v<version>`. Its copy carried the "Source of trutm" artefact in
   the issue footer. Done 2026-10-02: transcriptmeter TM-24, its PR #29; the sync dry run and the first
@@ -143,19 +143,19 @@ creation. Each is opt-in or a warning, so a repository that does not ask sees no
   `phase=shipped`. Done: `"closeMilestones": true` closes a milestone that is
   `phase=shipped` with no open item, and reopens one that is closed but no longer
   finished, by `PATCH` of its state — still no delete call. The plan prints
-  `CLOSE-MILESTONE` and `REOPEN-MILESTONE`; the summary counts them only with the key on. <!-- bs: prio=med size=S labels=sync,enhancement ver=main -->
+  `CLOSE-MILESTONE` and `REOPEN-MILESTONE`; the summary counts them only with the key on. <!-- bs: prio=med size=S labels=sync,enhancement ver=0.2.0 -->
 - [x] **BS-21 — Warn on a stale phase**: `check` warns, on stderr and with exit 0, when a
   milestone is `phase=shipped` with open items, or has every item done and another phase.
   Warnings, not errors: the check must not start failing in every repository that has one.
-  Its first run found two here (v0.1.0 and v0.3.0), fixed in the same commit. <!-- bs: prio=med size=S labels=cli ver=main -->
+  Its first run found two here (v0.1.0 and v0.3.0), fixed in the same commit. <!-- bs: prio=med size=S labels=cli ver=0.2.0 -->
 - [x] **BS-22 — The next id**: `backlogsync next` prints the id a new item takes, one past
   the highest; fenced examples do not count and a gap is not reused. Picking by hand led
-  to an id already in use, caught only by `check`. <!-- bs: prio=low size=S labels=cli ver=main -->
+  to an id already in use, caught only by `check`. <!-- bs: prio=low size=S labels=cli ver=0.2.0 -->
 - [x] **BS-23 — Keep the issue body in step**: the body is written once, at creation, so a
   "Done: …" added to an item never reaches its issue. Done: `"syncBody": true` adds a
   `BODY` action that rewrites the body when it differs from what the item would create
   (line endings aside); off by default, like `syncLabels`, for a repository that edits
-  issue bodies by hand. <!-- bs: prio=low size=S labels=sync,enhancement ver=main -->
+  issue bodies by hand. <!-- bs: prio=low size=S labels=sync,enhancement ver=0.2.0 -->
 - [ ] **BS-24 — Release 0.2.0 and turn the keys on**: tag the release, then set
   `closeMilestones` (and where wanted `syncBody`) in the repositories that use backlogsync,
   and pin their action to the new tag. <!-- bs: prio=med size=S labels=release -->

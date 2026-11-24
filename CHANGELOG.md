@@ -5,6 +5,11 @@ versions follow [SemVer](https://semver.org/). Items reference their `BS-n` back
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-11-24
+
+0.2.0 adds three opt-in keys and a warning. With `closeMilestones`, `syncBody` and
+`syncLabels` unset the plan and the summary line read as in 0.1.1, and the roadmap is unchanged.
+
 ### Added
 - `"closeMilestones": true` closes a GitHub milestone whose heading is `phase=shipped` with no
   open item, and reopens one that is closed but no longer finished, with a `PATCH` of its
