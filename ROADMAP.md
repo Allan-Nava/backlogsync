@@ -4,7 +4,7 @@
 
 > This page is **generated** from [BACKLOG.md](BACKLOG.md), the single source of truth for planned work. Regenerate it with `node bin/backlogsync.mjs roadmap` after editing the backlog — CI fails when the two disagree.
 
-**24 items · 21 shipped · 3 open · 4 milestones.**
+**24 items · 22 shipped · 2 open · 4 milestones.**
 
 ## At a glance
 
@@ -13,7 +13,7 @@
 | **v0.1.0 — One repository in step** | shipped | `##########` 100% | 0 | 12 |
 | **v0.2.0 — Every copy replaced** | next | `#######...` 67% | 2 | 4 |
 | **v0.3.0 — Later** | shipped | `##########` 100% | 0 | 1 |
-| **v0.4.0 — What the copies did not do** | now | `########..` 80% | 1 | 4 |
+| **v0.4.0 — What the copies did not do** | shipped | `##########` 100% | 0 | 5 |
 
 ## v0.1.0 — One repository in step
 
@@ -49,4 +49,4 @@
 - [x] **BS-21** — Warn on a stale phase · med · S · cli · `0.2.0`
 - [x] **BS-22** — The next id · low · S · cli · `0.2.0`
 - [x] **BS-23** — Keep the issue body in step · low · S · sync, enhancement · `0.2.0`
-- [ ] **BS-24** — Release 0.2.0 and turn the keys on · med · S · release
+- [x] **BS-24** — Release 0.2.0 and turn the keys on · med · S · release · `0.2.0`

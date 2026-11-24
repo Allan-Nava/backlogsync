@@ -77,7 +77,8 @@
         "color": "a2eeef",
         "description": "New capability"
       }
-    }
+    },
+    "closeMilestones": true
   },
   "devDependencies": {
     "marked": "^17.0.0"

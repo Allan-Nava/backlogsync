@@ -132,7 +132,7 @@ Done after 0.1.0, by version tag rather than commit.
   `LABELS <id> <#> +added -removed`; the summary line counts `to relabel` only when the
   key is on. <!-- bs: prio=low size=S labels=sync,enhancement ver=0.1.1 -->
 
-## v0.4.0 — What the copies did not do <!-- ms: phase=now -->
+## v0.4.0 — What the copies did not do <!-- ms: phase=shipped -->
 
 Found on 2026-11-24 using backlogsync across nava-ui, cragcast and streamprobe-operator:
 milestones nobody closes, phases nobody updates, ids picked by hand, issue bodies frozen at
@@ -156,6 +156,10 @@ creation. Each is opt-in or a warning, so a repository that does not ask sees no
   `BODY` action that rewrites the body when it differs from what the item would create
   (line endings aside); off by default, like `syncLabels`, for a repository that edits
   issue bodies by hand. <!-- bs: prio=low size=S labels=sync,enhancement ver=0.2.0 -->
-- [ ] **BS-24 — Release 0.2.0 and turn the keys on**: tag the release, then set
+- [x] **BS-24 — Release 0.2.0 and turn the keys on**: tag the release, then set
   `closeMilestones` (and where wanted `syncBody`) in the repositories that use backlogsync,
-  and pin their action to the new tag. <!-- bs: prio=med size=S labels=release -->
+  and pin their action to the new tag. Done 2026-11-24: 0.2.0 on npm; nava-ui,
+  streamprobe-operator and cragcast on `backlogsync--v0.2.0` with both keys on and their
+  stale phases fixed. Their first syncs closed eight milestones left open with nothing in
+  them (six in nava-ui, two in cragcast) and rewrote 119 issue bodies. This repository has
+  `closeMilestones` on too. <!-- bs: prio=med size=S labels=release ver=0.2.0 -->
