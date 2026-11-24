@@ -4,15 +4,16 @@
 
 > This page is **generated** from [BACKLOG.md](BACKLOG.md), the single source of truth for planned work. Regenerate it with `node bin/backlogsync.mjs roadmap` after editing the backlog — CI fails when the two disagree.
 
-**19 items · 17 shipped · 2 open · 3 milestones.**
+**24 items · 21 shipped · 3 open · 4 milestones.**
 
 ## At a glance
 
 | Milestone | Phase | Progress | Open | Shipped |
 |---|---|---|---|---|
-| **v0.1.0 — One repository in step** | now | `##########` 100% | 0 | 12 |
+| **v0.1.0 — One repository in step** | shipped | `##########` 100% | 0 | 12 |
 | **v0.2.0 — Every copy replaced** | next | `#######...` 67% | 2 | 4 |
-| **v0.3.0 — Later** | later | `##########` 100% | 0 | 1 |
+| **v0.3.0 — Later** | shipped | `##########` 100% | 0 | 1 |
+| **v0.4.0 — What the copies did not do** | now | `########..` 80% | 1 | 4 |
 
 ## v0.1.0 — One repository in step
 
@@ -41,3 +42,11 @@
 ## v0.3.0 — Later
 
 - [x] **BS-18** — Keep labels in step on existing issues · low · S · sync, enhancement · `0.1.1`
+
+## v0.4.0 — What the copies did not do
+
+- [x] **BS-20** — Close finished milestones · med · S · sync, enhancement · `main`
+- [x] **BS-21** — Warn on a stale phase · med · S · cli · `main`
+- [x] **BS-22** — The next id · low · S · cli · `main`
+- [x] **BS-23** — Keep the issue body in step · low · S · sync, enhancement · `main`
+- [ ] **BS-24** — Release 0.2.0 and turn the keys on · med · S · release

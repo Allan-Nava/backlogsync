@@ -18,7 +18,7 @@ devDependency used only by the site build.
 
 ```
 bin/
-  backlogsync.mjs      the CLI: roadmap, check, sync; exit codes 0/1/2
+  backlogsync.mjs      the CLI: roadmap, check, sync, next; exit codes 0/1/2
   lib/args.mjs         argument parser (util.parseArgs is 18.3+, the floor is 18.0)
   lib/config.mjs       package.json#backlogsync or .backlogsync.json, validated
   lib/backlog.mjs      parse, lint, roadmap — pure, text in
@@ -54,7 +54,8 @@ Do not weaken these; they are the tool's reason to exist.
    action for it; an issue whose item left the backlog is not touched. The fake API
    answers DELETE with 405 and the tests assert none is sent. With `syncLabels` on, a
    label leaves an issue through a `PATCH` of its whole label list, never the per-label
-   DELETE endpoint, and only a declared or `prio-` label is ever removed (BS-18).
+   DELETE endpoint, and only a declared or `prio-` label is ever removed (BS-18). With
+   `closeMilestones` on, a milestone is closed or reopened by a `PATCH` of its state (BS-20).
 3. **The plan is printed in full before anything is applied**, and `--dry-run` sends no
    write — the tests assert zero non-GET requests.
 4. **The roadmap layout is a compatibility contract.** `roadmap()` must keep producing

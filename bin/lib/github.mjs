@@ -80,6 +80,7 @@ export function client({ token, repo, apiUrl = 'https://api.github.com', userAge
     createMilestone: (title, description) => request('POST', `${r}/milestones`, { title, description }).then((x) => x.data),
     createIssue: (fields) => request('POST', `${r}/issues`, fields).then((x) => x.data),
     updateIssue: (num, fields) => request('PATCH', `${r}/issues/${num}`, fields).then((x) => x.data),
+    updateMilestone: (num, fields) => request('PATCH', `${r}/milestones/${num}`, fields).then((x) => x.data),
     comment: (num, body) => request('POST', `${r}/issues/${num}/comments`, { body }).then((x) => x.data),
   }
 }

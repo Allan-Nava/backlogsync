@@ -5,7 +5,21 @@ versions follow [SemVer](https://semver.org/). Items reference their `BS-n` back
 
 ## [Unreleased]
 
+### Added
+- `"closeMilestones": true` closes a GitHub milestone whose heading is `phase=shipped` with no
+  open item, and reopens one that is closed but no longer finished, with a `PATCH` of its
+  state; the plan prints `CLOSE-MILESTONE` / `REOPEN-MILESTONE` (BS-20).
+- `check` warns, on stderr and with exit 0, about a milestone whose phase disagrees with its
+  items (BS-21).
+- `backlogsync next` prints the id a new item takes (BS-22).
+- `"syncBody": true` rewrites an existing issue's body when its item's text has changed: a
+  `BODY` action (BS-23).
+- All three keys and the warning are off or silent unless asked for: with the keys unset the
+  plan and the summary line read as in 0.1.1.
+
 ### Changed
+- The backlog's v0.1.0 and v0.3.0 milestones are `phase=shipped`: the new phase warning found
+  them.
 - hookgate and trimhook run on backlogsync 0.1.1; with disclosegate, skilltrigger,
   transcriptmeter and whipbench that is six repositories off their own copy (BS-11, BS-12).
 
