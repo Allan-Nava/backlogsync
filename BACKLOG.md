@@ -24,7 +24,7 @@ itself on every push to `main` that changes this file.
 - `prio` is `high`, `med` or `low`; `size` is `S`, `M`, `L` or `XL`; `labels` come from
   `package.json#backlogsync.labels`.
 
-## v0.1.0 — One repository in step <!-- ms: phase=now -->
+## v0.1.0 — One repository in step <!-- ms: phase=shipped -->
 
 0.0.1 is the tool, its tests and this repository, in the repository only. 0.1.0 is the
 first version on npm, and it waits on one real repository running on backlogsync.
@@ -120,7 +120,7 @@ Done after 0.1.0, by version tag rather than commit.
   meta `hld`, a `VERSION` file, tags `v<version>`.
   <!-- bs: prio=med size=S labels=migration -->
 
-## v0.3.0 — Later <!-- ms: phase=later -->
+## v0.3.0 — Later <!-- ms: phase=shipped -->
 
 - [x] **BS-18 — Keep labels in step on existing issues**: today an issue's labels are
   set once, at creation, as every copy did; a label changed in the backlog afterwards
@@ -131,3 +131,31 @@ Done after 0.1.0, by version tag rather than commit.
   a hand-added label stays and there is still no delete call. The plan prints
   `LABELS <id> <#> +added -removed`; the summary line counts `to relabel` only when the
   key is on. <!-- bs: prio=low size=S labels=sync,enhancement ver=0.1.1 -->
+
+## v0.4.0 — What the copies did not do <!-- ms: phase=now -->
+
+Found on 2026-11-24 using backlogsync across nava-ui, cragcast and streamprobe-operator:
+milestones nobody closes, phases nobody updates, ids picked by hand, issue bodies frozen at
+creation. Each is opt-in or a warning, so a repository that does not ask sees no change.
+
+- [x] **BS-20 — Close finished milestones**: a milestone whose items are all ticked stays
+  open on GitHub for ever; nava-ui had six open with no open issue, four of them
+  `phase=shipped`. Done: `"closeMilestones": true` closes a milestone that is
+  `phase=shipped` with no open item, and reopens one that is closed but no longer
+  finished, by `PATCH` of its state — still no delete call. The plan prints
+  `CLOSE-MILESTONE` and `REOPEN-MILESTONE`; the summary counts them only with the key on. <!-- bs: prio=med size=S labels=sync,enhancement ver=main -->
+- [x] **BS-21 — Warn on a stale phase**: `check` warns, on stderr and with exit 0, when a
+  milestone is `phase=shipped` with open items, or has every item done and another phase.
+  Warnings, not errors: the check must not start failing in every repository that has one.
+  Its first run found two here (v0.1.0 and v0.3.0), fixed in the same commit. <!-- bs: prio=med size=S labels=cli ver=main -->
+- [x] **BS-22 — The next id**: `backlogsync next` prints the id a new item takes, one past
+  the highest; fenced examples do not count and a gap is not reused. Picking by hand led
+  to an id already in use, caught only by `check`. <!-- bs: prio=low size=S labels=cli ver=main -->
+- [x] **BS-23 — Keep the issue body in step**: the body is written once, at creation, so a
+  "Done: …" added to an item never reaches its issue. Done: `"syncBody": true` adds a
+  `BODY` action that rewrites the body when it differs from what the item would create
+  (line endings aside); off by default, like `syncLabels`, for a repository that edits
+  issue bodies by hand. <!-- bs: prio=low size=S labels=sync,enhancement ver=main -->
+- [ ] **BS-24 — Release 0.2.0 and turn the keys on**: tag the release, then set
+  `closeMilestones` (and where wanted `syncBody`) in the repositories that use backlogsync,
+  and pin their action to the new tag. <!-- bs: prio=med size=S labels=release -->

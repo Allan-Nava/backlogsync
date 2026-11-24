@@ -21,9 +21,9 @@ export const PRIO_LABELS = {
 }
 
 export const DEFAULT_REGENERATE = 'npx backlogsync roadmap'
-const KEYS = new Set(['prefix', 'meta', 'name', 'backlog', 'roadmap', 'labels', 'branch', 'regenerate', 'syncLabels'])
+const KEYS = new Set(['prefix', 'meta', 'name', 'backlog', 'roadmap', 'labels', 'branch', 'regenerate', 'syncLabels', 'syncBody', 'closeMilestones'])
 
-// → { root, source, prefix, meta, name, backlog, roadmap, labels, branch, regenerate, syncLabels }
+// → { root, source, prefix, meta, name, backlog, roadmap, labels, branch, regenerate, syncLabels, syncBody, closeMilestones }
 // `backlog` and `roadmap` are absolute; `backlogRel` is the path the documents print.
 export function loadConfig({ cwd = process.cwd(), configPath } = {}) {
   let raw
@@ -97,6 +97,14 @@ export function normalise(raw, { root = process.cwd(), source = '(inline)', pkgN
   if (raw.syncLabels !== undefined && typeof raw.syncLabels !== 'boolean') bad(`syncLabels must be true or false, got ${JSON.stringify(raw.syncLabels)}`)
   const syncLabels = raw.syncLabels === true
   if (syncLabels && !labels) bad('syncLabels needs "labels": the sync adds and removes only the labels declared there, and none are')
+  // Off by default, like syncLabels: an issue's body is written once, at creation, unless
+  // the repository asks for it to follow the item's text (BS-23); and a milestone is left
+  // open unless the repository asks for shipped milestones to be closed (BS-20).
+  for (const k of ['syncBody', 'closeMilestones']) {
+    if (raw[k] !== undefined && typeof raw[k] !== 'boolean') bad(`${k} must be true or false, got ${JSON.stringify(raw[k])}`)
+  }
+  const syncBody = raw.syncBody === true
+  const closeMilestones = raw.closeMilestones === true
   return {
     root,
     source,
@@ -111,6 +119,8 @@ export function normalise(raw, { root = process.cwd(), source = '(inline)', pkgN
     branch,
     regenerate,
     syncLabels,
+    syncBody,
+    closeMilestones,
   }
 }
 

@@ -4,6 +4,7 @@
 //
 //   backlogsync roadmap      write ROADMAP.md from BACKLOG.md
 //   backlogsync check        validate BACKLOG.md and fail if ROADMAP.md is stale
+//   backlogsync next         print the id a new item takes, e.g. ST-13
 //   backlogsync sync         sync the issues and milestones (GITHUB_TOKEN, GITHUB_REPOSITORY)
 //     --dry-run              print the plan, change nothing
 //     --milestones v0.1.0,…  limit to these milestones, by version
@@ -18,7 +19,7 @@ import { appendFileSync, readFileSync, realpathSync, writeFileSync } from 'node:
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from './lib/args.mjs'
-import { lint, parse, roadmap } from './lib/backlog.mjs'
+import { lint, nextId, parse, phaseWarnings, roadmap } from './lib/backlog.mjs'
 import { ConfigError, loadConfig } from './lib/config.mjs'
 import { client, GitHubError } from './lib/github.mjs'
 import { sync } from './lib/sync.mjs'
@@ -29,7 +30,7 @@ const VERSION = JSON.parse(readFileSync(new URL('../package.json', import.meta.u
 const usage = () =>
   readFileSync(SELF, 'utf8')
     .split('\n')
-    .slice(1, 16)
+    .slice(1, 17)
     .map((l) => l.replace(/^\/\/ ?/, ''))
     .join('\n')
 
@@ -46,7 +47,7 @@ export async function main(argv = process.argv.slice(2), env = process.env, out 
     return 0
   }
   try {
-    if (!['roadmap', 'check', 'sync'].includes(cmd)) throw new UsageError(`unknown command "${cmd}" — try roadmap, check or sync`)
+    if (!['roadmap', 'check', 'sync', 'next'].includes(cmd)) throw new UsageError(`unknown command "${cmd}" — try roadmap, check, sync or next`)
     const spec = { config: 'string', backlog: 'string', roadmap: 'string' }
     if (cmd === 'sync') Object.assign(spec, { 'dry-run': 'boolean', milestones: 'string' })
     let args
@@ -74,6 +75,11 @@ export async function main(argv = process.argv.slice(2), env = process.env, out 
       return 1
     }
 
+    if (cmd === 'next') {
+      out(nextId(model, cfg))
+      return 0
+    }
+
     if (cmd === 'roadmap') {
       writeFileSync(cfg.roadmap, roadmap(model, cfg))
       out(`wrote ${args.values.roadmap ?? cfg.roadmapRel} — ${model.items.length} items, ${model.milestones.length} milestones`)
@@ -89,6 +95,8 @@ export async function main(argv = process.argv.slice(2), env = process.env, out 
         errOut(`${cfg.roadmapRel} is ${current === null ? 'missing' : 'stale'} — run \`${cfg.regenerate}\` and commit the result`)
         return 1
       }
+      // Warnings go to stderr and leave the exit code alone (BS-21).
+      for (const w of phaseWarnings(model, cfg)) errOut(w)
       out(`ok — ${model.items.length} items, ${model.milestones.length} milestones; ${cfg.roadmapRel} is in step with ${cfg.backlogRel}`)
       return 0
     }

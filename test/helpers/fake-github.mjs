@@ -72,6 +72,7 @@ export async function fakeGitHub({ repo = 'octo/demo', token = 'test-token', pag
         const issue = state.issues.find((i) => i.number === Number(m[1]))
         if (!issue) return send(404, { message: 'Not Found' })
         if (body.title !== undefined) issue.title = body.title
+        if (body.body !== undefined) issue.body = body.body
         if (body.state !== undefined) issue.state = body.state
         if (body.state_reason !== undefined) issue.state_reason = body.state_reason
         if (body.milestone !== undefined) {
@@ -86,6 +87,12 @@ export async function fakeGitHub({ repo = 'octo/demo', token = 'test-token', pag
           issue.labels = body.labels.map((name) => ({ name }))
         }
         return send(200, issue)
+      }
+      if ((m = rest.match(/^\/milestones\/(\d+)$/)) && req.method === 'PATCH') {
+        const ms = state.milestones.find((x) => x.number === Number(m[1]))
+        if (!ms) return send(404, { message: 'Not Found' })
+        if (body.state !== undefined) ms.state = body.state
+        return send(200, ms)
       }
       if ((m = rest.match(/^\/issues\/(\d+)\/comments$/)) && req.method === 'POST') {
         state.comments.push({ issue: Number(m[1]), body: body.body })

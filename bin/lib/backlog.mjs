@@ -109,6 +109,27 @@ export function parse(text, cfg) {
   return { milestones, items, errors }
 }
 
+// BS-21: a milestone's phase that disagrees with its items. Warnings, not errors: the
+// backlog is still sound, and the check must not start failing in every repository that
+// already has one. → ["BACKLOG.md:<line>: warning: <what>"].
+export function phaseWarnings(model, cfg) {
+  const file = cfg.backlogRel ?? 'BACKLOG.md'
+  const out = []
+  for (const ms of model.milestones) {
+    if (!ms.items.length) continue
+    const open = ms.items.filter((i) => i.status === 'open').length
+    if (ms.phase === 'shipped' && open) out.push(`${file}:${ms.line}: warning: "${ms.title}" is phase=shipped but ${open} of its ${ms.items.length} items ${open === 1 ? 'is' : 'are'} open`)
+    if (ms.phase !== 'shipped' && !open) out.push(`${file}:${ms.line}: warning: every item of "${ms.title}" is done but its phase is ${ms.phase}: phase=shipped once it is released`)
+  }
+  return out
+}
+
+// BS-22: the id a new item takes — one more than the highest in the backlog, examples in
+// fenced blocks aside. Ids are never reused, so a gap is not filled.
+export function nextId(model, cfg) {
+  return `${cfg.prefix}-${Math.max(0, ...model.items.map((i) => i.num)) + 1}`
+}
+
 // → ["BACKLOG.md:<line>: <problem>"]; empty when the backlog is sound.
 export function lint(model, cfg) {
   const file = cfg.backlogRel ?? 'BACKLOG.md'

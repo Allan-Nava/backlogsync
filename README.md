@@ -8,9 +8,10 @@
 
 ## What it does
 
-- **`backlogsync check`** — validates the backlog (ids well-formed and unique, metadata that parses and holds known values, every item under a milestone) and fails when `ROADMAP.md` is not what the backlog would generate. The CI gate.
+- **`backlogsync check`** — validates the backlog (and warns, without failing, about a milestone whose `phase` disagrees with its items) (ids well-formed and unique, metadata that parses and holds known values, every item under a milestone) and fails when `ROADMAP.md` is not what the backlog would generate. The CI gate.
 - **`backlogsync roadmap`** — writes `ROADMAP.md`: a summary line, a table of milestones with progress bars, then every item by milestone.
-- **`backlogsync sync`** — plans the issue sync, prints the whole plan, then applies it over the GitHub REST API: create the issue for an open item, close it when the item is ticked, reopen it when the item is unticked, retitle it when the title drifts, move it when the item moves to another milestone, and — only with [`syncLabels`](#configuration) on — set its labels when the item's have changed. `--dry-run` prints the plan and changes nothing.
+- **`backlogsync next`** — prints the id a new item takes: one past the highest in the backlog, examples in fenced blocks aside.
+- **`backlogsync sync`** — plans the issue sync, prints the whole plan, then applies it over the GitHub REST API: create the issue for an open item, close it when the item is ticked, reopen it when the item is unticked, retitle it when the title drifts, move it when the item moves to another milestone, and — only with [`syncLabels`](#configuration) on — set its labels when the item's have changed; with [`syncBody`](#configuration), rewrite its body when the item's text has changed; with [`closeMilestones`](#configuration), close a milestone once it is shipped and reopen it if it is not any more. `--dry-run` prints the plan and changes nothing.
 
 The sync **never deletes**. There is no delete call in the code. An issue whose item has left the backlog is left alone; so is an issue filed by hand, a pull request, and an issue with another prefix.
 
@@ -102,6 +103,8 @@ In `package.json` under `"backlogsync"`, or in `.backlogsync.json` — which is 
 | `backlog`, `roadmap` | `BACKLOG.md`, `ROADMAP.md` | Paths, relative to the config's directory. |
 | `branch` | `main` | The branch the issue footer links to. |
 | `regenerate` | `npx backlogsync roadmap` | The command the roadmap and the stale-roadmap error tell a reader to run. The generated-by comment prints it without its leading `node` or `npx`. |
+| `syncBody` | `false` | `true` keeps an existing issue's body in step with its item: a `BODY` action rewrites it when it differs from what a new issue would get (line endings aside). Off, the body is written once, at creation. |
+| `closeMilestones` | `false` | `true` closes a GitHub milestone whose backlog heading is `phase=shipped` with no open item, and reopens one that is closed but no longer finished — a `PATCH` of its state, never a delete. Off, milestones are only ever created. |
 | `syncLabels` | `false` | `true` keeps an existing issue's labels in step with its item: a `LABELS` action adds what the item names and removes what it no longer does, within `labels` and the three `prio-` labels; any other label on the issue is left alone. Needs `labels`. Off, an issue's labels are set once, at creation. |
 
 The sync takes `GITHUB_TOKEN` (or `GH_TOKEN`) and `GITHUB_REPOSITORY` from the environment, plus `GITHUB_API_URL` and `GITHUB_SERVER_URL` when set — Actions sets all four. A dry run on a public repository works without a token. Labels `prio-high`, `prio-med` and `prio-low` are added to every new issue from its `prio=`; a `labels` entry of the same name overrides one's colour.
@@ -150,6 +153,11 @@ Added since, opt-in, so a repository that does not ask sees no change:
   - **Any state.** A closed issue is relabelled like an open one, as a title is retitled in any state. An issue read without its labels is not planned at all.
   - **The plan line**, tab-separated like the others, is `LABELS <id> <#> +added -removed`, for example `LABELS ST-12 41 +docs +prio-low -prio-med`, in the dry run as in a real one; applied, `relabelled ST-12 #41 +docs +prio-low -prio-med`. Labels that do not exist yet are created first, as for a new issue.
   - **The summary line** gains `N to relabel`, after `to move`, only when `syncLabels` is on — even at zero, so the line's shape follows the config, not the data. With the key off it reads exactly as in 0.1.0.
+
+- **Finished milestones closed** (BS-20) — no copy ever closed a milestone, so every one stayed open with nothing in it. `"closeMilestones": true` closes it when its heading says `phase=shipped` and none of its items is open, and reopens it when that stops being true. Phase alone is not enough (an item may still be open under it) and items alone are not either (all ticked but not released is `phase=now`). The plan lines are `CLOSE-MILESTONE <title> <#>` and `REOPEN-MILESTONE <title> <#>`; the summary gains `N milestones to close · N to reopen`, only with the key on.
+- **Issue bodies kept in step** (BS-23) — `"syncBody": true` adds a `BODY` action. The wanted body is exactly the one a new issue gets, so an item edited after its issue was opened (a "Done: …" added, a sentence corrected) reaches the issue; GitHub's CRLF line endings are not a difference. The summary gains `N to rewrite`, only with the key on.
+- **Phase warnings** (BS-21) — `check` prints `warning:` lines on stderr for a milestone that is `phase=shipped` with open items, or whose items are all done under another phase, and still exits 0.
+- **`next`** (BS-22) — prints the next free id.
 
 ## Compatibility
 

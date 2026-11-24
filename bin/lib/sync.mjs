@@ -3,7 +3,7 @@
 // was about to do even when a later call fails.
 import { DASH } from './backlog.mjs'
 import { allLabels } from './config.mjs'
-import { existingFromIssues, labelDiff, plan, summarise } from './plan.mjs'
+import { existingFromIssues, existingMilestones, labelDiff, plan, summarise } from './plan.mjs'
 
 export function issueBody(it, cfg, { server = 'https://github.com', repo }) {
   const blob = `${server}/${repo}/blob/${cfg.branch}`
@@ -24,7 +24,16 @@ export const MILESTONE_DESCRIPTION = 'Backlog milestone. Source of truth: BACKLO
 // → { actions, summary, applied: [lines] }. `log` receives every line as it happens.
 export async function sync(model, cfg, gh, { dryRun = false, only = [], server, log = console.log } = {}) {
   const existing = existingFromIssues(await gh.issues(), cfg)
-  const actions = plan(model, existing, only, cfg)
+  // The extras are read only when a key asks for them, so a repository without them makes
+  // the same requests as before.
+  const extra = {}
+  let milestoneList = null
+  if (cfg.closeMilestones) {
+    milestoneList = await gh.milestones()
+    extra.milestones = existingMilestones(milestoneList)
+  }
+  if (cfg.syncBody) extra.bodies = new Map(model.items.filter((it) => it.ms).map((it) => [it.id, issueBody(it, cfg, { server, repo: gh.repo })]))
+  const actions = plan(model, existing, only, cfg, extra)
   for (const a of actions) log(a.join('\t'))
   const summary = summarise(actions, cfg)
   log('')
@@ -64,7 +73,7 @@ export async function sync(model, cfg, gh, { dryRun = false, only = [], server, 
 
   let milestones = null
   const milestoneNumber = async (title) => {
-    milestones ??= new Map((await gh.milestones()).map((m) => [m.title, m.number]))
+    milestones ??= new Map((milestoneList ?? (await gh.milestones())).map((m) => [m.title, m.number]))
     if (!milestones.has(title)) {
       const m = await gh.createMilestone(title, MILESTONE_DESCRIPTION.replace('BACKLOG.md', cfg.backlogRel))
       milestones.set(title, m.number)
@@ -75,6 +84,13 @@ export async function sync(model, cfg, gh, { dryRun = false, only = [], server, 
 
   const repo = gh.repo
   for (const [action, id, num, detail] of todo) {
+    // Milestone actions carry the milestone's title where an item action carries an id.
+    if (action === 'CLOSE-MILESTONE' || action === 'REOPEN-MILESTONE') {
+      const closing = action === 'CLOSE-MILESTONE'
+      await gh.updateMilestone(num, { state: closing ? 'closed' : 'open' })
+      note(`  ${closing ? 'closed' : 'reopened'} milestone ${id}`)
+      continue
+    }
     const it = byId.get(id)
     const title = `${id}${DASH}${it.title}`
     if (action === 'CREATE') {
@@ -92,6 +108,9 @@ export async function sync(model, cfg, gh, { dryRun = false, only = [], server, 
       // and a label outside the managed set stays in the list it was read with.
       await gh.updateIssue(num, { labels: labelDiff(it, existing.get(id), cfg).next })
       note(`  relabelled ${id}  #${num}  ${detail}`)
+    } else if (action === 'BODY') {
+      await gh.updateIssue(num, { body: issueBody(it, cfg, { server, repo }) })
+      note(`  rewrote ${id}  #${num}`)
     } else if (action === 'CLOSE') {
       await gh.comment(num, CLOSE_COMMENT)
       await gh.updateIssue(num, { state: 'closed', state_reason: 'completed' })
