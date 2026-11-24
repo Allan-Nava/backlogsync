@@ -32,8 +32,8 @@
 
 ## v0.2.0 — Every copy replaced
 
-- [x] **BS-11** — Migrate hookgate · med · S · migration · `main`
-- [x] **BS-12** — Migrate trimhook · med · S · migration · `main`
+- [x] **BS-11** — Migrate hookgate · med · S · migration · `0.2.0`
+- [x] **BS-12** — Migrate trimhook · med · S · migration · `0.2.0`
 - [x] **BS-13** — Migrate transcriptmeter · med · S · migration · `0.1.1`
 - [x] **BS-14** — Migrate disclosegate · high · S · migration · `0.1.1`
 - [ ] **BS-16** — Migrate gpuledger · med · S · migration
@@ -45,8 +45,8 @@
 
 ## v0.4.0 — What the copies did not do
 
-- [x] **BS-20** — Close finished milestones · med · S · sync, enhancement · `main`
-- [x] **BS-21** — Warn on a stale phase · med · S · cli · `main`
-- [x] **BS-22** — The next id · low · S · cli · `main`
-- [x] **BS-23** — Keep the issue body in step · low · S · sync, enhancement · `main`
+- [x] **BS-20** — Close finished milestones · med · S · sync, enhancement · `0.2.0`
+- [x] **BS-21** — Warn on a stale phase · med · S · cli · `0.2.0`
+- [x] **BS-22** — The next id · low · S · cli · `0.2.0`
+- [x] **BS-23** — Keep the issue body in step · low · S · sync, enhancement · `0.2.0`
 - [ ] **BS-24** — Release 0.2.0 and turn the keys on · med · S · release
